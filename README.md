@@ -62,6 +62,3 @@ The source license must not be interpreted as a license to Sigma-Team assets, tr
 
 Before publishing or redistributing a package that contains the bundled Alien Shooter game data, make sure you have permission from Sigma-Team or another valid legal basis to redistribute that content. The notice in this repository records ownership; it does not itself create redistribution permission.
 
-## Project status
-
-Version 1.0 is prepared as a clean public source/runtime package. Internal reconstruction checkpoints, chat-transfer material, generated audit ledgers and release-engineering scripts are intentionally not part of the public distribution.
