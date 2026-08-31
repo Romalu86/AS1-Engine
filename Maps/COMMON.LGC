@@ -1,0 +1,654 @@
+#include "maps\common_menu.lgc"
+#include "maps\common_table.lgc"
+
+#define MAX_LEVEL             10
+#define MAX_SAVE              5
+
+#define ADRENALIN_BONUS_DELAY 10000
+#define SPEEDUP_BONUS_DELAY   10000
+#define SPEEDDOWN_BONUS_DELAY 10000
+#define DRON_FLY_HEIGHT       20
+
+#define GAME_NORMAL           0
+#define GAME_WIN              1
+#define GAME_PLAYER_DEAD      2
+#define GAME_LOOSE            3
+
+#ifndef MUSIC0
+#define MUSIC0 "music\\mus00.ogg"
+#endif
+#ifndef MUSIC1
+#define MUSIC1 "music\\mus01.ogg"
+#endif
+
+
+static int MonstersVid[24] = {40,43,46,50,53,56,60,63,66,70,73,76,80,83,86,90,93,96,850,853,856,860,863,866};
+
+static int StartGameTime;       //время начала игры
+static int StartPlayerX=0,StartPlayerY=0,StartPlayerZ=0;
+static int StartEarthQuake=0,DelayEarthQuake;//время начала и длмтельность землетряски
+static int PlayerInGunTime=0;   //время когда игрок сел в пушку
+static int CurrentGamma=0;      //установленная в игре в данный момент гамма
+static int DoorsIsOpen=1;       //двери на уровне не работают если 0
+static int AdrenalinBeginTime=0;//время подбора бонуса адреналин
+static int SpeedUpBeginTime=0;  //время подбора бонуса ускорения времени
+static int SpeedDownBeginTime=0;//время подбора бонуса замедления времени
+static int StartNextMap=0;      //время для начала отсчета для загрузки следующей карты
+static string NextMapName;      //имя загружаемого файла
+static int LevelNumber=0;       //номер проигнрываемого в данный момент уровня
+static string PlayerSex;        //пол персонажа
+static string PlayerItems;      //вещи игрока сохраненные перед его смертью
+static int PlayerShadow=0;      //спрайт тени игрока
+int PlayerMaxSpeed,PlayerMaxHp;
+int PlayerMoney;
+int PlayerItem[12];//количество вещей [nVid-720] у игрока
+int PlayerExplosive=0;//количество взрывчатки у игрока
+int PlayerScores;
+int PlayerScoresTact=0;//число очков набранных игроком за последний такт
+static int OptionsOn = 0;
+static int GameState = GAME_NORMAL;// см. #define GAME_XXX
+static int MusicFileNumber;//в данный момент проигрывается музыка номер MusicFileNumber
+static int ArrowHint=0;//стрелка подсказки куда идти
+
+//Возвращает 1 приблизительно один раз в секунду
+//при вызове в одном такте данной функции повторно
+//она все равно вернет то-же значение что и в первый вызов
+OneTimeInSecond()
+{
+  static int old_time=0;
+  if( (GetTime()-old_time) > 1023 || old_time > GetTime() )
+    old_time = GetTime();
+  if( GetTime()==old_time )
+    return 1;
+  return 0;
+}
+OneTimeInQuarterSecond()
+{
+  static int old_time=0;
+  if( (GetTime()-old_time) > 255 || old_time > GetTime() )
+    old_time=GetTime();
+  if( GetTime()==old_time )
+    return 1;
+  return 0;
+}
+
+AddCoorX(int unit,int dx)
+{
+  Action( unit,ACT_CHANGE_COOR,GetX(unit)+dx,GetY(unit),GetZ(unit) );
+}
+
+EarthQuake(int delay)
+{
+  StartEarthQuake = GetTime();
+  DelayEarthQuake = delay;
+  SetEnvironment(ENV_EARTHQUAKE);
+}
+GetGammaIntensive(int gamma)
+{
+  int r=0,g=0,b=0,i=0;
+  b=gamma&255;
+  g=(gamma>>8)&255;
+  r=(gamma>>16)&255;
+  i=0;
+  if( r&128 )
+    i=i-(255-r)*(255-r);
+  else 
+    i=i+r*r;
+  if( g&128 )
+    i=i-(255-g)*(255-g);
+  else 
+    i=i+g*g;
+  if( b&128 )
+    i=i-(255-b)*(255-b);
+  else 
+    i=i+b*b;
+  return i;
+}
+static int SpotLight=0;         //ссылка на световое пятно фонарика
+static int StartSpotLight=0;    //время начала включения фонарика
+// включить фонарик или ночное видение
+SpotLightOn()
+{
+  StartSpotLight = GetTime();
+  if( PlayerItem[729-720] && !SpotLight )//если есть ночное видение
+  {
+    SetGamma(0x7F0E7F);
+  }
+  else if( PlayerItem[728-720] )//если есть фонарик
+  {
+    if( !SpotLight )
+      SpotLight = CreateSprite(165,GetX(Flagman(0)),GetY(Flagman(0)),11);
+  }
+}
+// выключить фонарик или ночное видение
+SpotLightOff()
+{
+  StartSpotLight = 0;
+  if( GetGamma()==0x7F0E7F )
+  {
+    SetGamma(CurrentGamma);
+  }
+  if( SpotLight )
+  {
+    Destroy(SpotLight);
+    SpotLight = 0;
+  }
+}
+SpotLightChange()
+{
+  if( StartSpotLight )
+    if( SpotLight || !PlayerItem[728-720] )//если фонарик включен либо его нет вообще
+    {
+      SpotLightOff();
+    }
+    else
+    {
+      SetGamma(CurrentGamma);
+      SpotLight = CreateSprite(165,GetX(Flagman(0)),GetY(Flagman(0)),11);
+    }
+  else
+  {
+    SpotLightOn();
+  }
+}
+
+static int StartLight=0;//время начала включения света
+//static int GammaLight;//финальная гамма к которой будет сдвигаться гамма
+static int StartGammaLight;//гамма от которой будет сдвигаться гамма
+LightOn(int new_gamma)
+{
+//  PlaySFX(0);//звук включающегося генератора
+  StartLight      = GetTime();
+  StartGammaLight = GetGamma();
+  CurrentGamma    = new_gamma;
+}
+LightOff(int new_gamma)
+{
+//  PlaySFX(0);//звук выключающегося генератора
+  StartLight      = GetTime();
+  StartGammaLight = GetGamma();
+  CurrentGamma    = new_gamma;
+}
+LightTact()
+{
+  if( StartLight )
+    if( GetTime()-StartLight < 1024 )
+      SetGamma(CountGamma(StartGammaLight,CurrentGamma,(GetTime()-StartLight)/4)); 
+    else
+    {
+      StartLight = 0;
+      SetGamma(CurrentGamma);
+      if( GetGammaIntensive(CurrentGamma) > 10000 )
+        SpotLightOn();//зажечь фонарик
+      else
+        SpotLightOff();//выключить фонарик
+    }
+}
+
+SavePlayer(string name)
+{
+  int    i;
+  string save_path;
+  save_path = GetDefaultRegPath();
+  if( name!="" )
+  {
+    save_path = save_path + "\\" + name;
+
+    for( i = 0; i < MAX_SAVE; i++ )
+      if( GetReg( GetDefaultRegPath(),"SaveName"+itoa(i),"" )==name )
+        break;
+    for( ; i > 0; i-- )
+      SetReg( GetDefaultRegPath(),"SaveName"+itoa(i),GetReg( GetDefaultRegPath(),"SaveName"+itoa(i-1),"" ) );
+    SetReg( GetDefaultRegPath(),"SaveName0",name );
+  }
+  // не сохраняем параметры игрока при survive игре
+//  if( GetReg(GetDefaultRegPath(),"GameTypeSurvive",0) )
+//    return;
+
+  SetReg(save_path,"LevelNumber",LevelNumber);
+  SetReg(save_path,"PlayerName",GetReg(GetDefaultRegPath(),"PlayerName",GetString("menu","DefaultName")));
+  SetReg(save_path,"PlayerSex",PlayerSex);
+  SetReg(save_path,"PlayerMoney",PlayerMoney);
+  SetReg(save_path,"PlayerScores",PlayerScores);
+  if( Flagman(0) )
+  {
+    for( i = 0; i < 10; i++ )
+    {
+      SetReg(save_path,"PlayerAmmo"+itoa(i), Action(Flagman(0),ACT_GET_AMMO,i) );
+      SetReg(save_path,"PlayerWeapon"+itoa(i),Action(Flagman(0),ACT_HAVE_ITEM,260+i));
+    }
+    PlayerItem[730-720] = Action(Flagman(0),ACT_HAVE_ITEM,230);//аптечка спасательная
+/*    for( i = 0; i < 3; i++ )//бронежилеты
+      if( GetVidData(200+i,VID_COUNT) )
+        PlayerItem[4+i] = 1;
+      else
+        PlayerItem[4+i] = 0;*/
+    if( GetVidData(290,VID_COUNT) )//дрон
+      PlayerItem[11] = 1;
+    else
+      PlayerItem[11] = 0;
+    PlayerItem[4+0] = PlayerItem[4+1] = PlayerItem[4+2] = 0;//PlayerItem[730-720] = PlayerItem[11] = 0;
+    for( i = 0; i < 12; i++ )
+      SetReg(save_path,"PlayerItem"+itoa(i),PlayerItem[i]);
+  }
+}
+
+#include "maps\common_fame.lgc"
+#include "maps\common_statebar.lgc"
+#include "maps\items.lgc"
+#include "maps\common_event.lgc"
+
+SaveGameState()
+{
+  SetReg(GetDefaultRegPath(),"StateBar",StateBar);
+}
+LoadNextMap(string name)
+{
+  Effect(EFF_FADE,0);
+  NextMapName = name;
+  StartNextMap = GetTime();
+}
+Win()
+{
+  Destroy(ArrowHint); ArrowHint = 0;//уничтожить стрелку подсказки
+  Genocide(908);//убить генераторы монстров 
+  CreateText(3,ScreenX()/2,ScreenY()/2+150,0,GetString("menu","MissionComplete"),BEH_CENTER);
+  CreateText(3,ScreenX()/2,ScreenY()/2+170,0,GetString("menu","SpaceBar"),BEH_CENTER);
+//  SavePlayer("");
+//  LoadNextMap( "maps\\shop.map" );
+  GameState = GAME_WIN;
+}
+
+//установка первоначальных параметров игрока при перерождении
+SetInitialGameParameters()
+{
+  int i,link;
+  AdrenalinBeginTime = 0;
+  SpeedUpBeginTime   = 0;
+  SpeedDownBeginTime = 0;
+  SetVidData(9,VID_SPEED,PlayerMaxSpeed);
+  SetVidData(9,VID_MAXHP0,PlayerMaxHp);
+  // Установка патронов и оружия игрока
+  for( i = 0; i < 10; i++ )
+  {
+    if( GetReg(GetDefaultRegPath(),"PlayerWeapon"+itoa(i),0) )
+      Action(Flagman(0),ACT_ADD_ITEM,260+i);
+    Action(Flagman(0),ACT_ADD_AMMO,
+      GetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(i),0) - Action(Flagman(0),ACT_GET_AMMO,i),i);
+  }
+  // Установка прочих вещей игрока
+  for( i = 0; i< 12; i++ )
+    PlayerItem[i] = GetReg(GetDefaultRegPath(),"PlayerItem"+itoa(i),0);
+  if( PlayerItem[730-720] )//аптечка спасательная
+    Action(Flagman(0),ACT_ADD_ITEM,230);
+  if( PlayerItem[731-720] )//дрон
+    CreateSprite(290,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+DRON_FLY_HEIGHT,GetDirection(Flagman(0)));
+  for( i = 6; i >=4; i-- )//бронежилеты
+    if( PlayerItem[i] )
+    {
+      link = Action(Flagman(0),ACT_GET_LINK);
+      if( PlayerSex=="male" )
+        CreateSprite(i+196,GetX(link),GetY(link),GetZ(link),GetDirection(link),link);
+      else
+        CreateSprite(i+196,GetX(link),GetY(link),GetZ(link)+3,GetDirection(link),link);
+      break;
+    }
+  if( GetGammaIntensive(GetGamma()) > 10000 )//зажечь фонарик
+    SpotLightOn();
+}
+
+ReloadVidAndSetVidParameters()
+{
+  int i;
+  //устанавливаем игроку пистолеты для начала уровня
+//  SetVidData(9,VID_LINK,11);
+
+  // переустановка всех VID параметров
+  ReloadVid();
+  if( GetReg(GetDefaultRegPath(),"Blood","0")=="0" )
+  {// green blood
+    SetVidData(110,VID_EXCHANGEVID,166);
+    SetVidData(120,VID_EXCHANGEVID,167);
+    SetVidData(151,VID_EXCHANGEVID,197);
+//    SetVidData(152,VID_EXCHANGEVID,198);
+    SetVidData(756,VID_EXCHANGEVID,755);
+    SetVidData(758,VID_EXCHANGEVID,757);
+    SetVidData(916,VID_EXCHANGEVID,918);
+  }
+  if( GetReg(GetDefaultRegPath(),"PlayerSex","male")=="female" )
+  {//если игрок играет теткой
+    for( i = 9; i <= 20; i++ )
+      SetVidData(i,VID_EXCHANGEVID,540+i);
+    SetVidData(352,VID_EXCHANGEVID,358);//на пушке
+  }
+  SetGraphLevel();
+  PlayerMaxSpeed = GetVidData(9,VID_SPEED);
+  PlayerMaxHp    = GetVidData(9,VID_MAXHP0);
+  // установка параметров купленных имплантантов
+  for( PlayerItem[0] = 0; PlayerItem[0] < GetReg(GetDefaultRegPath(),"PlayerItem0",0); )
+    F242_0(0);
+  for( PlayerItem[1] = 0; PlayerItem[1] < GetReg(GetDefaultRegPath(),"PlayerItem1",0); )
+    F243_0(0);
+  for( PlayerItem[2] = 0; PlayerItem[2] < GetReg(GetDefaultRegPath(),"PlayerItem2",0); )
+    F244_0(0);
+  for( PlayerItem[3] = 0; PlayerItem[3] < GetReg(GetDefaultRegPath(),"PlayerItem3",0); )
+    F245_0(0);
+}
+InitGame()
+{
+  int i,unit;
+
+  ReloadVidAndSetVidParameters();
+  SetCursor(CURSOR_ATTACK);
+  CurrentGamma     = GetGamma();
+  StartGameTime    = GetTime();
+  StateBar         = GetReg(GetDefaultRegPath(),"StateBar",1);
+  PlayerSex        = GetReg(GetDefaultRegPath(),"PlayerSex","male");
+  LevelNumber      = GetReg(GetDefaultRegPath(),"LevelNumber",1);
+  PlayerMoney      = GetReg(GetDefaultRegPath(),"PlayerMoney",0);
+  PlayerScores     = GetReg(GetDefaultRegPath(),"PlayerScores",0);
+  PlayerExplosive  = 0;
+  // Поиск первоначального положения персонажа в игре
+  for( unit=FirstUnit(U_UNIT); unit; unit=NextUnit() )
+    if( GetUnitVid(unit)==9 || GetUnitVid(unit)==549 )
+    {
+      StartPlayerX=GetX(unit); StartPlayerY=GetY(unit); StartPlayerZ=GetZ(unit);
+      Destroy(unit);
+      unit = CreateSprite(9,StartPlayerX,StartPlayerY,StartPlayerZ);
+      SetFlagman(0,unit);
+      break;
+    }
+  SetInitialGameParameters();
+  PlayerShadow = CreateSprite(108,StartPlayerX,StartPlayerY,StartPlayerZ);
+
+//  SetVidData(59,VID_GAMMA+1,0xEEDA80);
+  MusicFileNumber=2;
+  PlayMusicFile("music\\mus00.ogg",1);
+  SetScrollType(SCROLL_TO_FLAGMAN_WITH_DIRECTION);
+  CreateStateBar();
+  Effect(EFF_FADE_OUT,0);
+  // устанавливаем черные гаммы для некотрых менюшек
+  for( i = 0; i < 10; i++ )
+    SetVidData(731+i,VID_GAMMA+1,0x7f7f7f);
+  for( i = 0; i < 12; i++ )
+    SetVidData(720+i,VID_GAMMA+1,0x7f7f7f);
+  SetVidData(748,VID_GAMMA+1,0x7f7f7f);//гамма для динамита
+  // для первого уровня сохраним параметры игрока
+  if( LevelNumber==1 && !GetReg(GetDefaultRegPath(),"GameTypeSurvive",0) )
+    SavePlayer( GetReg(GetDefaultRegPath(),"PlayerName",GetString("menu","DefaultName")) );
+}
+
+GameTact()
+{
+  int        i,menu,link;
+  static int last_kill = -10000;
+  if( PlayerScoresTact )
+    last_kill = GetTime();
+  PlayerScores += PlayerScoresTact;
+  PlayerScoresTact = 0;
+  if( StartNextMap )
+    if( GetEffectState(EFF_FADE) > 45 )
+    {
+      if( NextMapName=="options" )
+      {
+        SetCursor(CURSOR_NORMAL);
+        CreateOptionsMenu("maps\\gamemenu.men");
+        StartNextMap = 0;
+        OptionsOn    = 1;
+        SetScrollType(0);
+      }
+      else if( NextMapName=="game" )
+      {
+        SetCursor(CURSOR_ATTACK);
+        SetGraphLevel();
+        MenuRelease();
+        CreateStateBar();
+        StartNextMap = 0;
+        OptionsOn    = 0;
+        Pause(0);
+        SetScrollType(SCROLL_TO_FLAGMAN_WITH_DIRECTION);
+      }
+      else
+      {
+        SaveGameState();
+        PlayerMoney += LevelMoney[LevelNumber];
+        SetReg(GetDefaultRegPath(),"LevelNumber",itoa(++LevelNumber));
+        SavePlayer("");
+        // не сохраняем параметры игрока при survive игре
+//        if( !GetReg(GetDefaultRegPath(),"GameTypeSurvive",0) )
+        // сохраняем параметры ингрока только в случае его победы на уровне
+        if( NextMapName=="maps\\shop.map" )
+          SavePlayer( GetReg(GetDefaultRegPath(),"PlayerName",GetString("menu","DefaultName")) );
+        if( NextMapName=="maps\\mainmenu.map" )
+          SaveFame();
+        Pause(0);
+//        StopSFX(10);//остановить топот ног
+        StopMusic();
+        MusicFileNumber=2;
+        PlayMusicFile("music\\menu_mus.ogg");
+        Load(NextMapName);
+      }
+    }
+
+  if( OneTimeInSecond() )
+  {
+    // смена музыкальной темы после первого убийства врага
+    if( (GetTime() - last_kill) < 2000 && MusicFileNumber==2 && !OptionsOn )
+    {
+      MusicFileNumber = 0;
+      PlayMusicFile(MUSIC0,0);
+    }
+    if( !IsPlayMusic() )
+    {
+      if( (GetTime() - last_kill) > 30000 || OptionsOn )
+      {
+        MusicFileNumber = 2;
+        PlayMusicFile("music\\mus00.ogg",1);
+      }
+      else if( MusicFileNumber )
+      {
+        MusicFileNumber = 0;
+        PlayMusicFile(MUSIC0,0);
+      }
+      else
+      {
+        MusicFileNumber = 1;
+        PlayMusicFile(MUSIC1,0);
+      }
+    }
+  }
+
+  if( OptionsOn )
+  {
+    TactOptionsMenu();
+    if( MenuLClick() && MenuNVidUnderCursor()==705 )
+      if( MenuNDirUnderCursor()==0 )
+        LoadNextMap("game");//на самом деле это не загрузка а просто выход из меню
+      else if( MenuNDirUnderCursor()==1 )
+        LoadNextMap("maps\\mainmenu.map");
+    if( GetKey()==27 )
+      LoadNextMap("game");//на самом деле это не загрузка а просто выход из меню
+    return 1;
+  }
+  if( GameState==GAME_WIN )
+  {
+    if( GetKey()==' ' )
+      if( LevelNumber == 10 )
+        LoadNextMap( "maps\\level_11.map" );
+      else if( LevelNumber < MAX_LEVEL )
+        LoadNextMap( "maps\\shop.map" );
+      else
+        LoadNextMap( "maps\\mainmenu.map" );
+  }
+  if( GameState==GAME_PLAYER_DEAD )
+  {
+    if( GetKey()==' ' && !Flagman(0) )
+    {// Перерождение игрока
+      GameState = GAME_NORMAL;
+      Destroy( MenuFind(3,9) );
+      while( i=AskPlace(9,StartPlayerX,StartPlayerY,StartPlayerZ) )
+        if( GetUnitVid(i)!=-1 )
+          Destroy(i);
+        else
+          break;
+      SetFlagman(0,CreateSprite(9,StartPlayerX,StartPlayerY,StartPlayerZ));
+      SetInitialGameParameters();
+//      PlayerItem[727-720] -= 1;//PlayerLife
+      int invulnerable;
+      invulnerable = AddInvulnerable();
+      Action(invulnerable,ACT_SET_DEATH_TIMER,3000);
+//      SetCommands( Flagman(0),PlayerItems );
+    }
+  }
+
+  if( StartEarthQuake )
+    if( (GetTime()-StartEarthQuake) > DelayEarthQuake || StartEarthQuake > GetTime() )
+    {//остановить землетрясение
+      StartEarthQuake = 0;
+      SetEnvironment(ENV_EARTHQUAKE+ENV_STOP);
+    }
+  if( Flagman(0) )
+  {
+    // Вылезание и игрока из пушки
+    if( GetUnitVid(Flagman(0))==350 )
+    {
+      if( (GetTime()-PlayerInGunTime) > 1000 && (GetInputState()&(INPUT_LEFT|INPUT_RIGHT|INPUT_UP|INPUT_DOWN|INPUT_SECOND)) )
+      {
+        CreateSprite(357,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0)),GetDirection(Action(Flagman(0),ACT_GET_LINK)));
+        Action(Flagman(0),ACT_CHANGE_VID,9);
+/*        Action( CreateSprite(357,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0)),GetDirection(Flagman(0))),
+                ACT_SET_HP,
+                Action(Flagman(0),ACT_GET_HP),
+                0 );*/
+        Action(Flagman(0),ACT_CHANGE_COOR,GetX(Flagman(0))+90,GetY(Flagman(0))-90,GetZ(Flagman(0)));
+        Action(Flagman(0),ACT_SET_HP,Action(Flagman(0),ACT_GET_HP)/30);// уменьшение hp игрока при вылезании из пушки
+        // Возвращаем бронежилет
+//        for( link = Action(Flagman(0),ACT_GET_LINK); link; link = Action(link,ACT_GET_LINK) )
+//          if( GetUnitVid(link) >= 200 && GetUnitVid(link) <= 202 /*&& GetZ(link) < 0*/ )
+//            Action(link,ACT_CHANGE_COOR,GetX(link),GetY(link),GetZ(link)+200);
+        for( i = 6; i >=4; i-- )//бронежилеты
+          if( PlayerItem[i] )
+          {
+            link = Action(Flagman(0),ACT_GET_LINK);
+            if( PlayerSex=="male" )
+              CreateSprite(i+196,GetX(link),GetY(link),GetZ(link),GetDirection(link),link);
+            else
+              CreateSprite(i+196,GetX(link),GetY(link),GetZ(link)+3,GetDirection(link),link);
+            break;
+          }
+      }
+    }
+    else
+      Action(PlayerShadow,ACT_CHANGE_COOR,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0)));
+    if( GetKey()=='f' || GetKey()=='F' )
+      SpotLightChange();//переключить вид фонарика
+
+
+    if( GetKey() )
+    {
+      static int old_key=0,new_key;
+      if( GetKey()>='a' &&  GetKey()<='z' )
+        new_key = GetKey() - ('a'-'A');
+      else
+        new_key = GetKey();
+      if( old_key==0 && new_key=='C' )
+        old_key = new_key;
+      else if( old_key=='C' && new_key=='H' )
+        old_key = new_key;
+      else if( old_key=='H' && new_key=='E' )
+        old_key = new_key;
+      else if( old_key=='E' && new_key=='A' )
+        old_key = new_key;
+      else if( old_key=='A' && new_key=='T' )
+        old_key = new_key;
+      else if( old_key=='T' )
+      {
+        if( new_key=='A' )//add all ammo
+          for( i=2; i < 10; i++ )
+            Action(Flagman(0),ACT_ADD_AMMO,999,i);
+        if( new_key=='H' )//add health
+          Action(Flagman(0),ACT_SET_HP,1000,0);
+        if( new_key=='W' )//add all weapon
+          for( i = 2; i < 10; i++ )
+          {
+            AddAmmo(i,GettingAmmo[i]/2);
+            Action(Flagman(0),ACT_ADD_ITEM,260+i,0);
+          }
+        iff( new_key=='E' )
+          Win();
+        old_key = 0;
+      }
+      else old_key = 0;
+//    if( GetKey()=='K' )//kill all monsters
+//      for( i=FirstUnit(U_UNIT); i; i=NextUnit() )
+//        if( Action(i,ACT_GET_ARMY)==1 )
+//          Action(i,ANI_DEATH);
+//    if( GetKey()=='G' )//set player invulnerable
+//    {
+//      SetVidData(GetUnitVid(Flagman(0)),VID_MAXHP0,999999);
+//      Action(Flagman(0),ACT_DAMAGE,-999999,0);
+//    }
+    }
+  }
+  else if( GameState==GAME_WIN )
+  { // для смерти игрока после его победы
+    GameState = GAME_LOOSE;
+    Effect(EFF_NUKE,0xff0000);
+    if( LevelNumber == 10 )
+      LoadNextMap( "maps\\level_11.map" );
+    else if( LevelNumber < MAX_LEVEL )
+      LoadNextMap( "maps\\shop.map" );
+    else
+      LoadNextMap( "maps\\mainmenu.map" );
+  }
+  else if( GameState!=GAME_PLAYER_DEAD && GameState!=GAME_LOOSE )// Если игрок убит
+  {
+    if( PlayerItem[727-720] >= 0 )//PlayerLife
+    {
+      Action( CreateText(3,ScreenX()/2,ScreenY()/2,0,GetString("menu","AnyKeyForRebirth"),BEH_CENTER),
+        ACT_CHANGE_DIRECTION,10);
+      GameState = GAME_PLAYER_DEAD;
+    }
+    else
+    {
+      LoadNextMap("maps\\mainmenu.map");
+      GameState = GAME_LOOSE;
+    }
+    Effect(EFF_NUKE,0xff0000);
+  }
+
+  if( (GetTime()-AdrenalinBeginTime) < ADRENALIN_BONUS_DELAY )
+  {
+    AdrenalinBeginTime=0;
+    SetVidData(9,VID_SPEED,PlayerMaxSpeed);
+  }
+  if( (GetTime()-SpeedUpBeginTime) < SPEEDDOWN_BONUS_DELAY )
+  {
+    SpeedUpBeginTime=0;
+  }
+  if( (GetTime()-SpeedDownBeginTime) < SPEEDDOWN_BONUS_DELAY )
+  {
+    SpeedDownBeginTime=0;
+  }
+  LightTact();
+  if( SpotLight )
+  {
+    i = GetDirection( Action(Flagman(0),ACT_GET_LINK) );
+    Action(SpotLight,ACT_CHANGE_COOR,GetX(Flagman(0))+Sin(i)/10,GetY(Flagman(0))-Cos(i)/10,11);
+  }
+
+  if( GetKey()==27 )
+  {
+    Pause(1);
+    LoadNextMap("options");//на самом деле это не загрузка а просто вход в меню
+  }
+  if( GetKey()==9 )
+  {
+    StateBar^=1;
+    CreateStateBar();
+  }
+  DrawStateBar();
+
+  return 0;
+}
+

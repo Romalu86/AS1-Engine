@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 09: 
+magma ammo box
+
+PARAMETERS:
+damage: 100 
+radius: 30 
+reload: 10 
+speed : FASTEST

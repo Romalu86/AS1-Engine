@@ -1,0 +1,14 @@
+RED ARMOR
+
+PARAMETERS:
+capacity: 300
+hit damage: 10/90
+
+DESCRIPTION:  
+with the latest advancements in 
+defensive systems technology 
+scientists have succeeded in 
+mating our armors with alien 
+organic compounds. the result is 
+an armor system that can reduce 
+damage by 90%. 

@@ -1,0 +1,72 @@
+#define MAX_RECORD 10 //максимальное количество результатов в таблице рекордов
+
+#define CAMPAIGN_BEG_X 30
+#define SURVIVE_BEG_X  350
+#define FAME_BEG_Y     110
+
+DrawFame()
+{
+  int i;
+  MenuLoad("maps\\highscores.men");
+//  CreateText(3,20,10,0,GetString("menu","Campaign"));
+//  CreateText(3,340,10,0,GetString("menu","Survive"));
+  for( i = 0; i < MAX_RECORD; i++ )
+  {
+    if( GetReg( GetDefaultRegPath(),"NewRecord",999 )==i )
+    {
+      CreateText(3,CAMPAIGN_BEG_X,FAME_BEG_Y-3+i*30,0,GetReg(GetDefaultRegPath(),"CampaignName"+itoa(i),GetString("menu","DefaultName")));
+      CreateText(3,CAMPAIGN_BEG_X+155,FAME_BEG_Y-3+i*30,0,GetReg(GetDefaultRegPath(),"CampaignScores"+itoa(i),0));
+    }
+    else
+    {
+      CreateText(4,CAMPAIGN_BEG_X,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"CampaignName"+itoa(i),GetString("menu","DefaultName")));
+      CreateText(4,CAMPAIGN_BEG_X+155,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"CampaignScores"+itoa(i),0));
+    }
+    if( GetReg( GetDefaultRegPath(),"NewRecord",999 )==i+100 )
+    {
+      CreateText(3,SURVIVE_BEG_X,FAME_BEG_Y-3+i*30,0,GetReg(GetDefaultRegPath(),"SurviveName"+itoa(i),GetString("menu","DefaultName")));
+      CreateText(3,SURVIVE_BEG_X+155,FAME_BEG_Y-3+i*30,0,GetReg(GetDefaultRegPath(),"SurviveScores"+itoa(i),0));
+    }
+    else
+    {
+      CreateText(4,SURVIVE_BEG_X,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"SurviveName"+itoa(i),GetString("menu","DefaultName")));
+      CreateText(4,SURVIVE_BEG_X+155,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"SurviveScores"+itoa(i),0));
+    }
+  }
+  // если игрок только что сыграл но его результат не попал в таблицу рекордов
+  i = MAX_RECORD+1;
+  if( GetReg( GetDefaultRegPath(),"NewRecord",999 )==MAX_RECORD )
+  {
+    CreateText(3,CAMPAIGN_BEG_X,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"CampaignName"+itoa(MAX_RECORD),GetString("menu","DefaultName")));
+    CreateText(3,CAMPAIGN_BEG_X+155,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"CampaignScores"+itoa(MAX_RECORD),0));
+  }
+  else if( GetReg( GetDefaultRegPath(),"NewRecord",999 )==MAX_RECORD+100 )
+  {
+    CreateText(3,SURVIVE_BEG_X,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"SurviveName"+itoa(MAX_RECORD),GetString("menu","DefaultName")));
+    CreateText(3,SURVIVE_BEG_X+155,FAME_BEG_Y+i*30,0,GetReg(GetDefaultRegPath(),"SurviveScores"+itoa(MAX_RECORD),0));
+  }
+  SetReg( GetDefaultRegPath(),"NewRecord",999 );
+}
+
+SaveFame()
+{
+  int    i,save;
+  string type;
+  if( GetReg(GetDefaultRegPath(),"GameTypeSurvive",0) )
+    type = "Survive";// для survive
+  else
+    type = "Campaign";
+  for( save = 0; save < MAX_RECORD; save++ )
+    if( GetReg(GetDefaultRegPath(),type+"Scores"+itoa(save),0) < GetReg(GetDefaultRegPath(),"PlayerScores",0) )
+      break;
+  for( i = MAX_RECORD; i > save ; i-- )
+  { // сдвигаем таблицу рекордов
+    SetReg( GetDefaultRegPath(),type+"Scores"+itoa(i),GetReg(GetDefaultRegPath(),type+"Scores"+itoa(i-1),0) );
+    SetReg( GetDefaultRegPath(),type+"Name"+itoa(i),GetReg(GetDefaultRegPath(),type+"Name"+itoa(i-1),GetString("menu","DefaultName")) );
+  }
+  SetReg( GetDefaultRegPath(),type+"Scores"+itoa(save),GetReg(GetDefaultRegPath(),"PlayerScores",0) );
+  SetReg( GetDefaultRegPath(),type+"Name"+itoa(save),GetReg(GetDefaultRegPath(),"PlayerName",GetString("menu","DefaultName")) );
+  if( GetReg(GetDefaultRegPath(),"GameTypeSurvive",0) )
+    save += 100;
+  SetReg( GetDefaultRegPath(),"NewRecord",save );
+}

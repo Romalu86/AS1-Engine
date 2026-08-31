@@ -1,0 +1,388 @@
+// Бонус заморозка
+F234_0(int bonus)
+{
+  int unit,i;
+  if( SizeTo(Flagman(0),GetX(bonus),GetY(bonus)) < 60 )
+  {
+    for( unit = FirstInBox(GetX(bonus)-500,GetY(bonus)-500,GetX(bonus)+500,GetY(bonus)+500);
+         unit;
+         unit = NextInBox() )
+      if( SizeTo(unit,GetX(bonus),GetY(bonus)) < 1000 && Action(unit,ACT_GET_ARMY,0,0)==1 )
+      {
+        for( i = 0; i < sizeof(MonstersVid)/4 && MonstersVid[i] < 800; i++ )
+          if( MonstersVid[i]==GetUnitVid(unit) )
+          {
+            Action(unit,ACT_CHANGE_VID,(GetUnitVid(unit)/10)*10+9,ANI_STAND);
+            Action(unit,ACT_SET_BEHAVE,0,0);
+            Action(unit,ACT_ATTACK,0,0);
+            Action(unit,ACT_STOP,1,0);
+            break;
+          }
+      }
+    Effect(EFF_NUKE,0x1010ff);
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    Action(bonus,ANI_DEATH2,0,0);
+  }
+}
+
+// Бонус взрыв
+F236_0(int bonus)
+{
+  int unit;
+  if( SizeTo(Flagman(0),GetX(bonus),GetY(bonus)) < 60 )
+  {
+    for( unit = FirstInBox(GetX(bonus)-500,GetY(bonus)-500,GetX(bonus)+500,GetY(bonus)+500);
+         unit;
+         unit = NextInBox() )
+      if( SizeTo(unit,GetX(bonus),GetY(bonus)) < 1000 && Action(unit,ACT_GET_ARMY,0,0)==1 )
+      {
+        Action(unit,ACT_DAMAGE,300,0);
+      }
+    EarthQuake(2500);
+    Effect(EFF_NUKE,0xffffff);
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    Action(bonus,ANI_DEATH2,0,0);
+  }
+}
+
+// Бонус адреналин
+F238_0(int bonus)
+{
+  if( SizeTo(Flagman(0),GetX(bonus),GetY(bonus))<60 )
+    if( !AdrenalinBeginTime )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(bonus))),-1,-1);
+      AdrenalinBeginTime = GetTime();
+      SetVidData(9,VID_SPEED,PlayerMaxSpeed+80);
+      Action(bonus,ANI_DEATH2,0,0);
+    }
+}
+
+// подбор игроком аптечки
+F210_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( Action(Flagman(0),ACT_GET_HP) < PlayerMaxHp )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      Action(Flagman(0),ACT_DAMAGE,-20);
+      Action(unit,ANI_DEATH2,0,0);
+      CreateSprite(760,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+60);
+    }
+}
+F211_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( Action(Flagman(0),ACT_GET_HP) < PlayerMaxHp )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      Action(Flagman(0),ACT_DAMAGE,-50);
+      Action(unit,ANI_DEATH2,0,0);
+      CreateSprite(760,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+60);
+    }
+}
+F212_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( Action(Flagman(0),ACT_GET_HP) < (PlayerMaxHp+100) )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      if( Action(Flagman(0),ACT_GET_HP) < PlayerMaxHp )
+        Action(Flagman(0),ACT_SET_HP,Action(Flagman(0),ACT_GET_HP)+100);
+      else
+        Action(Flagman(0),ACT_SET_HP,PlayerMaxHp+100);
+      Action(unit,ANI_DEATH2);
+      CreateSprite(760,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+60);
+    }
+}
+
+
+// добавляет игроку патроны если нужно, возвращает 1 если патроны не нужны
+AddAmmo(int n_weapon,int no_ammo)
+{
+  if( Action(Flagman(0),ACT_GET_AMMO,n_weapon,0) < GetVidData(10+n_weapon,VID_AMMO) )
+  {
+    if( (Action(Flagman(0),ACT_GET_AMMO,n_weapon,0)+no_ammo)
+        <= GetVidData(10+n_weapon,VID_AMMO) )
+      Action( Flagman(0),ACT_ADD_AMMO,no_ammo,n_weapon );
+    else
+      Action( Flagman(0),ACT_ADD_AMMO,
+        GetVidData(10+n_weapon,VID_AMMO)-Action(Flagman(0),ACT_GET_AMMO,n_weapon,0),
+        n_weapon );
+    // Устанавливаем индикатор количества патронов для данного оружия
+    if( StateBar )
+      Action( StateBarAmmo[n_weapon], ACT_CHANGE_DIRECTION,
+        (Action(Flagman(0),ACT_GET_AMMO,n_weapon,0)*248)/GetVidData(10+n_weapon,VID_AMMO) );
+    return 0;
+  }
+  return 1;
+}
+// Подбор игроком оружия
+F260_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit))<60 )
+  {
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    AddAmmo(GetUnitVid(unit)-260,GettingAmmo[GetUnitVid(unit)-260]/2);
+    Action(Flagman(0),ACT_ADD_ITEM,GetUnitVid(unit),0);
+    if( StateBar )
+    {
+      Action(StateBarAmmo[GetUnitVid(unit)-260],ACT_SET_INVISIBLE,0);
+      Action(StateBarWeapon[GetUnitVid(unit)-260],ACT_SET_INVISIBLE,0);
+    }
+    Action(unit,ANI_DEATH2,0,0);
+  }
+}
+F261_0(int unit) { F260_0(unit); }// подбор оружия
+F262_0(int unit) { F260_0(unit); }
+F263_0(int unit) { F260_0(unit); }
+F264_0(int unit) { F260_0(unit); }
+F265_0(int unit) { F260_0(unit); }
+F266_0(int unit) { F260_0(unit); }
+F267_0(int unit) { F260_0(unit); }
+F268_0(int unit) { F260_0(unit); }
+F269_0(int unit) { F260_0(unit); }
+
+// Подбор игроком денег
+F241_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+  {
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    PlayerMoney += 50;
+    Action(unit,ANI_DEATH2,0,0);
+  }
+}
+// Подбор жизни
+F235_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( PlayerItem[727-720] < 5 )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      PlayerItem[727-720]++;
+      Action(unit,ANI_DEATH2,0,0);
+    }
+}
+// Подбор игроком аптечки спасательной
+F230_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( !Action(Flagman(0),ACT_HAVE_ITEM,GetUnitVid(unit),0) )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      Action(Flagman(0),ACT_ADD_ITEM,GetUnitVid(unit),0);
+      Action(unit,ANI_DEATH2,0,0);
+      if( StateBar )
+        MenuAction(730,999999,ACT_SET_ARMY,0);
+    }
+}
+// Подбор игроком динамита
+F301_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit))<60 )
+  {
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    PlayerExplosive++;
+//    Action(Flagman(0),ACT_ADD_ITEM,GetUnitVid(unit),0);
+    Action(unit,ANI_DEATH2,0,0);
+    if( StateBar )
+    {
+      string text;
+      text = PlayerExplosive;
+      Action(StateBarExplosive,ACT_SET_TEXT,&text);
+      MenuAction(748,999999,ACT_SET_ARMY,0);
+    }
+  }
+}
+
+// Подбор игроком патронов
+F302_0(int unit)
+{
+  int n_weapon;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit))<50 )
+  {
+    if( !AddAmmo(GetUnitVid(unit)-300,GettingAmmo[GetUnitVid(unit)-300]) )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      Action(unit,ANI_DEATH2,0,0);
+    }
+  }
+}
+F303_0(int unit) { F302_0(unit); }// подбор патронов
+F304_0(int unit) { F302_0(unit); }
+F305_0(int unit) { F302_0(unit); }
+F306_0(int unit) { F302_0(unit); }
+F307_0(int unit) { F302_0(unit); }
+F308_0(int unit) { F302_0(unit); }
+F309_0(int unit) { F302_0(unit); }
+
+//подбор игроком брони
+F204_0(int unit)
+{
+  int link, already_have_armor, prev;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+  {
+    already_have_armor = 0;
+    for( link = Action(Flagman(0),ACT_GET_LINK); link; link = Action(link,ACT_GET_LINK) )
+      if( GetUnitVid(link) >= 200 && GetUnitVid(link) <= 202 )
+      {
+        if( Action(link,ACT_GET_HP,0,0) < GetVidData(GetUnitVid(unit)-4,VID_MAXHP0) )
+        {//уничтожаем старый бронежилет
+          prev = Action(link,ACT_GET_UPLINK);
+          Destroy(link);
+          link = prev;
+//          break;
+        }
+        else
+          already_have_armor = 1;
+      }
+      else if( GetVidData(GetUnitVid(link),VID_CLASS)==B_LINKER && GetUnitVid(link)!=203 )
+      { // уничтожаем гало от оружия
+        prev = Action(link,ACT_GET_UPLINK);
+        if( GetVidData(GetUnitVid(link),VID_LINK) == GetUnitVid(Action(link,ACT_GET_LINK)) )
+          Destroy( Action(link,ACT_GET_LINK) );
+        Destroy( link );
+        link = prev;
+      }
+    if( !already_have_armor )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      link = Action(Flagman(0),ACT_GET_LINK);
+      if( PlayerSex=="male" )
+        CreateSprite(GetUnitVid(unit)-4,GetX(link),GetY(link),GetZ(link),GetDirection(link),link);
+      else
+        CreateSprite(GetUnitVid(unit)-4,GetX(link),GetY(link),GetZ(link)+3,GetDirection(link),link);
+//      Action(Flagman(0),ACT_ADD_ITEM,GetUnitVid(unit),0);
+      Action(unit,ANI_DEATH2);
+    }
+  }
+}
+F205_0(int unit) { F204_0(unit); }
+F206_0(int unit) { F204_0(unit); }
+
+AddInvulnerable()
+{
+  int link;
+  for( link = Action(Flagman(0),ACT_GET_LINK); link; link = Action(link,ACT_GET_LINK) )
+    if( GetUnitVid(link)==203 )
+    {
+      Destroy(link);
+      break;
+    }
+  link = Action(Flagman(0),ACT_GET_LINK);
+  return CreateSprite(203,GetX(link),GetY(link),GetZ(link)-13,GetDirection(link),link);
+}
+//подбор игроком неуязвимости
+F207_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+  {
+    if( StateBar )
+      MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+    AddInvulnerable();
+    Action(unit,ANI_DEATH2);
+  }
+}
+
+// подбор имплантанта увеличения жизни
+F242_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 || !unit )
+    if( PlayerItem[720-720] < 3 )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      PlayerItem[720-720]++;
+      PlayerMaxHp = (PlayerMaxHp*1263)/1000;
+      if( GetVidData(9,VID_MAXHP0) < PlayerMaxHp ) 
+        SetVidData(9,VID_MAXHP0,PlayerMaxHp);
+      Action(unit,ANI_DEATH2);
+    }
+}
+
+// подбор имплантанта увеличения силы (максимального количества патронов)
+F243_0(int unit)
+{
+  int i;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 || !unit )
+    if( PlayerItem[721-720] < 3 )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      PlayerItem[721-720]++;
+      for( i = 12; i < 20; i++ )
+        SetVidData( i,VID_AMMO,(GetVidData(i,VID_AMMO)*13)/10 );
+      Action(unit,ANI_DEATH2);
+    }
+}
+
+// подбор имплантанта увеличения скорости
+F244_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 || !unit )
+    if( PlayerItem[722-720] < 3 )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      PlayerItem[722-720]++;
+      PlayerMaxSpeed = (PlayerMaxSpeed*115)/100;
+      SetVidData(9,VID_SPEED,PlayerMaxSpeed);
+      Action(unit,ANI_DEATH2);
+    }
+}
+
+// подбор имплантанта увеличения точности пападаний и повреждений
+F245_0(int unit)
+{
+  int i;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 || !unit )
+    if( PlayerItem[723-720] < 3 )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      PlayerItem[723-720]++;
+      for( i = 10; i < 20; i++ )
+      {
+        SetVidData( i,VID_WEAPONAIM,(GetVidData(i,VID_WEAPONAIM)*6)/10 );
+      }
+      //увеличение повреждений от пуль
+      SetVidData(168,VID_DAMAGE,(GetVidData(168,VID_DAMAGE)*120)/100);//1-пистолет
+      SetVidData(100,VID_DAMAGE,(GetVidData(100,VID_DAMAGE)*120)/100);//2-ружье
+      SetVidData(156,VID_DAMAGE,(GetVidData(156,VID_DAMAGE)*110)/100);//4-пулемет
+      SetVidData(113,VID_DAMAGE,(GetVidData(113,VID_DAMAGE)*110)/100);//5-ракета
+      SetVidData(112,VID_DAMAGE,(GetVidData(112,VID_DAMAGE)*120)/100);//7-плазма
+      SetVidData(904,VID_DAMAGE,(GetVidData(904,VID_DAMAGE)*130)/100);//8-огнемет
+      SetVidData(129,VID_DAMAGE,(GetVidData(129,VID_DAMAGE)*110)/100);//9-магма
+      Action(unit,ANI_DEATH2);
+    }
+}
+
+// подбор дрона
+F231_0(int unit)
+{
+  int link;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 60 )
+    if( !GetVidData(290,VID_COUNT) )
+    {
+      if( StateBar )
+        MessageText(GetString("items","Item"+itoa(GetUnitVid(unit))),-1,-1);
+      CreateSprite(290,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+DRON_FLY_HEIGHT,GetDirection(Flagman(0)));
+      Action(unit,ANI_DEATH2);
+      if( StateBar )
+        MenuAction(731,999999,ACT_SET_ARMY,0);
+    }
+}

@@ -1,0 +1,19 @@
+WEAPON 06: 
+freeze rifle
+
+PARAMETERS:
+damage: FREEZE 40 
+radius: 80 
+reload: 100 
+speed : FAST  
+
+DESCRIPTION:
+one of our latest breakthroughs 
+in advanced weapons technology, 
+the freezing rifle can freeze 
+a crowd of monsters before they 
+have a chance to tear you into 
+thousands of bloody, bite sized 
+chunks. by the way soldier, in 
+case you didn`t know, that`s 
+a good thing.

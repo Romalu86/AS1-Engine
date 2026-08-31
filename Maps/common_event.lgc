@@ -1,0 +1,336 @@
+//обработка вызываемых при проигрывании различных анимаций у различных спрайтов функций
+
+// Сохранение вещей игрока при его смерти
+F009_15(int unit)
+{
+/*  if( Action(unit,ACT_HAVE_ITEM,230) )
+  {// использование спасательной аптечки
+    CreateSprite(181,GetX(unit),GetY(unit),GetZ(unit)+30);
+    Action(unit,ACT_DELETE_ITEM,230);
+    Action(unit,ACT_SET_HP,PlayerMaxHp);
+    Action(unit,ANI_STAND);
+  }
+  else*/
+  {
+//    PlayerItems = GetCommands(unit);
+  }
+  Destroy(ArrowHint); ArrowHint = 0;//уничтожить стрелку подсказки
+  PlayerItem[727-720] -= 1;//--PlayerLife
+  SavePlayer("");
+}
+F009_16(int unit) { F009_15(unit); }
+
+
+// для заморозки монстров
+F145_15(int cannon)
+{
+  int unit;
+//  for( unit = FirstUnit(U_UNIT); unit; unit = NextUnit() )
+  for( unit = FirstInBox(GetX(cannon)-130,GetY(cannon)-130,GetX(cannon)+130,GetY(cannon)+130);
+       unit;
+       unit = NextInBox() )
+    if( SizeTo(unit,GetX(cannon),GetY(cannon)) < 130 && Action(unit,ACT_GET_ARMY)==1 && GetUnitVid(unit)%10!=9 )
+    {
+      Action(unit,ACT_DAMAGE,30);
+      if( GetUnitVid(unit) < 800 )//для всех монстров кроме боссов
+        if( GetAnimation(unit)==ANI_DEATH || GetAnimation(unit)==ANI_DEATH2 )
+        {
+          Action(unit,ACT_CHANGE_VID,(GetUnitVid(unit)/10)*10+9,ANI_STAND);
+          Action(unit,ACT_SET_BEHAVE,0,0);
+          Action(unit,ACT_ATTACK,0,0);
+          Action(unit,ACT_STOP,1,0);
+        }
+    }
+}
+
+
+//смерть пушки с игроком
+F350_15(int unit)
+{
+  int dir;
+  dir = GetDirection(Action(unit,ACT_GET_LINK));
+  CreateSprite(357,GetX(unit),GetY(unit),GetZ(unit),dir);
+  Action(unit,ACT_CHANGE_COOR,GetX(unit)+Sin(dir)/15,GetY(unit)-Cos(dir)/15,GetZ(unit));
+//  Action(unit,ACT_CHANGE_ANIMATION,ANI_STAND);
+  Action(unit,ACT_CHANGE_VID,9);
+}
+// проверка на залезаемость игрока в пушку
+F357_0(int unit)
+{
+  int link;
+  if( SizeTo(Flagman(0), GetX(unit),GetY(unit)) < 70 )
+  {//если игрок близко от пушки то он в нее превращается
+    // убираем бронежилет
+    PlayerItem[4] = 0; PlayerItem[5] = 0; PlayerItem[6] = 0;
+    for( link = Action(Flagman(0),ACT_GET_LINK); link; link = Action(link,ACT_GET_LINK) )
+      if( GetUnitVid(link) >= 200 && GetUnitVid(link) <= 202 )
+      {
+        PlayerItem[GetUnitVid(link)-200+4] = 1;
+        Destroy(link);
+//        Action(link,ACT_CHANGE_COOR,GetX(link),GetY(link),GetZ(link)-200);
+        break;
+      }
+    PlayerInGunTime= GetTime();
+    Action(Flagman(0),ACT_CHANGE_COOR,GetX(unit),GetY(unit),GetZ(unit));
+    Action(Flagman(0),ACT_STOP,1);
+    Action(Flagman(0),ACT_CHANGE_VID,350);
+    Action(Flagman(0),ACT_CHANGE_DIRECTION,GetDirection(unit));
+    Action(Flagman(0),ACT_SET_HP,Action(Flagman(0),ACT_GET_HP)*30);// увеличение hp игрока в пушке
+    Destroy(unit);
+  }
+}
+
+//работа  с дверями 605
+F605_0(int door)
+{
+//  if( !DoorsIsOpen )
+//    return;
+  if( SizeTo(Flagman(0),GetX(door),GetY(door)) < 80 && DoorsIsOpen )
+  {
+    if( GetZ(door)>=0 )//звук на начало открывания двери
+      PlaySFXFromCoor(26,GetX(door),GetY(door));
+    if( GetZ(door)!=-64 )
+      Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)-4);
+    Action(door,ACT_SET_TIMER,2000,0);
+  }
+  else if( GetZ(door) < 0 )
+    if( !Action(door,ACT_GET_TIMER,0,0) || !DoorsIsOpen )
+    {
+      if( GetZ(door)==-64 )//звук на начало закрывания двери
+        if( !GetSprite(GETSPRITE_HASH+GETSPRITE_UNIT,GetX(door),GetY(door)) || !DoorsIsOpen  )
+        {
+          PlaySFXFromCoor(26,GetX(door),GetY(door));
+          Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)+4);
+        }
+        else;
+      else
+        Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)+4);
+    }
+    else if( GetZ(door)!=-64 )//дооткрыть недооткрытые двери
+      Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)-4);
+}
+//работа  с дверями 607
+F607_0(int door)
+{
+//  if( !DoorsIsOpen )
+//    return;
+  if( SizeTo(Flagman(0),GetX(door),GetY(door)) < 120 && DoorsIsOpen )
+  {
+    if( GetZ(door)>=0 )//звук на начало открывания двери
+      PlaySFXFromCoor(26,GetX(door),GetY(door));
+    if( GetZ(door)!=-72 )
+      Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)-2);
+    Action(door,ACT_SET_TIMER,2000,0);
+  }
+  else if( GetZ(door) < 0 )
+    if( !Action(door,ACT_GET_TIMER,0,0) || !DoorsIsOpen  )
+    {
+      if( GetZ(door)==-72 )//звук на начало закрывания двери
+        if( !GetSprite(GETSPRITE_HASH+GETSPRITE_UNIT,GetX(door),GetY(door)) || !DoorsIsOpen  )
+        {
+          PlaySFXFromCoor(26,GetX(door),GetY(door));
+          Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)+2);
+        }
+        else;
+      else
+        Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)+2);
+    }
+    else if( GetZ(door)!=-72 )//дооткрыть недооткрытые двери
+      Action(door,ACT_CHANGE_COOR,GetX(door),GetY(door),GetZ(door)-2);
+}
+
+//работа с местом закладки динамита
+F179_0(int unit)
+{
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 40 )
+    if( PlayerExplosive )//если игрок имеет динамит
+    {
+      CreateSprite(184,GetX(unit),GetY(unit),GetZ(unit));//рождение динамита
+      PlayerExplosive--;
+      Action(unit,ANI_DEATH,0,0);
+      if( StateBar )
+      {
+        string text;
+        if( !PlayerExplosive )
+        {
+          MenuAction(748,999999,ACT_SET_ARMY,1);
+          text="";
+        }
+        else
+          text = PlayerExplosive;
+        Action(StateBarExplosive,ACT_SET_TEXT,&text);
+      }
+    }
+}
+//взрыв динамита
+F184_15(int unit)
+{
+  int object;
+  Effect(EFF_NUKE,0xffffff);
+  EarthQuake(4000);
+  for( object = FirstInBox(GetX(unit)-100,GetY(unit)-100,GetX(unit)+100,GetY(unit)+100);
+       object;
+       object = NextInBox() )
+  {
+    if( GetUnitVid(object)==9 )
+      if( SizeTo(object,GetX(unit),GetY(unit)) < 100 )
+        Action(object,ANI_DEATH);
+    if( GetUnitVid(object)>=800 && GetUnitVid(object)<=814 )//убить генераторы 800-810 поблизости от взрыва
+      Action(object,ANI_DEATH);
+    else if( GetUnitVid(object)==908 )//убить генератор 908
+      Action(object,ANI_DEATH);
+    else if( GetUnitVid(object)==616 || GetUnitVid(object)==612 )//родить гору камней
+      CreateSprite(615,GetX(object),GetY(object),GetZ(object),GetDirection(object));
+    else if( GetUnitVid(object)==450 )//убить телепорт
+      Action(object,ANI_DEATH);
+    else if( SizeTo(unit,GetX(object),GetY(object)) < 150 && Action(object,ACT_GET_ARMY)==1 )
+      Action(object,ANI_DEATH);
+  }
+}
+
+//взрывы бочек и баллонов
+F401_15(int unit)
+{
+  EarthQuake(500);
+}
+F112_15(int unit)
+{
+  EarthQuake(120);
+}
+F618_15(int unit) { F401_15(unit); }
+F619_15(int unit) { F401_15(unit); }
+F909_15(int unit) { F401_15(unit); }
+F402_15(int unit) { F401_15(unit); }
+F113_15(int unit) { F112_15(unit); }
+F751_15(int unit) { F112_15(unit); }
+F109_15(int unit) { F112_15(unit); }
+F356_15(int unit) { F112_15(unit); }// взрыв снаряда пушки
+F437_15(int unit)
+{
+  Effect(EFF_NUKE,0xffffff);
+  EarthQuake(1000);
+}
+
+/*F915_15(int unit)
+{
+  if( Action(unit,ACT_GET_LINK,0,0) )
+  {
+  }
+}*/
+
+// следование дрона за игроком
+F290_0(int unit)
+{
+  if( GetAnimation(unit)!=ANI_DEATH && GetAnimation(unit)!=ANI_DEATH2 )
+    if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) > 20 )
+    {
+      if( !Random(1) )
+//        Action(unit,ACT_MOVE_TO,Flagman(0));
+        Action(unit,ACT_MOVE,GetX(Flagman(0)),GetY(Flagman(0)),GetZ(Flagman(0))+DRON_FLY_HEIGHT);
+    }
+    else// if( Action(unit,ACT_GET_COMMAND)==COM_MOVE )
+      Action(unit,ACT_STOP);
+}
+F290_1(int unit)  { F290_0(unit); }
+F290_2(int unit)  { F290_0(unit); }
+F290_3(int unit)  { F290_0(unit); }
+//F290_4(int unit)  { F290_0(unit); }
+//F290_5(int unit)  { F290_0(unit); }
+//F290_6(int unit)  { F290_0(unit); }
+//F290_9(int unit)  { F290_0(unit); }
+//F290_10(int unit) { F290_0(unit); }
+//F290_11(int unit) { F290_0(unit); }
+//F290_12(int unit) { F290_0(unit); }
+// смерть дрона
+F290_15(int unit)
+{
+  if( StateBar )
+    MenuAction(731,999999,ACT_SET_ARMY,1);
+}
+F290_16(int unit) { F290_15(unit); }
+
+// выключенный рубильник
+F418_0(int unit)
+{
+  int i,j;
+  int wall_trap[16],no_wall_trap;
+  if( SizeTo(Flagman(0),GetX(unit),GetY(unit)) < 40 )
+  {
+    CreateSprite(417,GetX(unit),GetY(unit),GetZ(unit),GetDirection(unit));
+    Action(unit,ANI_DEATH,0,0);
+    DoorsIsOpen = 1;
+    LightOn(0);
+    no_wall_trap = 0;
+    for( i=FirstSprite(); i; i=NextSprite() )
+    {
+      if( GetUnitVid(i)==180 && SizeTo(unit,GetX(i),GetY(i)) < 100 )
+        Destroy(i);
+      else if( GetUnitVid(i)==424 )
+      {//замены кнопок у дверей
+        CreateSprite(423,GetX(i),GetY(i),GetZ(i),GetDirection(i));
+        Destroy(i);
+      }
+      else if( GetUnitVid(i)==609 )
+      {
+        for( j = 0; j < no_wall_trap; j++ )
+          if( SizeTo(wall_trap[j],GetX(i),GetY(i))<10 )
+          {
+            Destroy(i);
+            wall_trap[j] = wall_trap[--no_wall_trap];
+            break;
+          }
+        if( j>=no_wall_trap )
+          wall_trap[no_wall_trap++] = i;
+      }
+      else if( GetUnitVid(i)==612 )
+      {
+        for( j = 0; j < no_wall_trap; j++ )
+          if( SizeTo(wall_trap[j],GetX(i),GetY(i))<10 )
+          {
+            Destroy(wall_trap[j]);
+            wall_trap[j] = wall_trap[--no_wall_trap];
+            break;
+          }
+        if( j>=no_wall_trap )
+          wall_trap[no_wall_trap++] = i;
+      }
+    }
+  }
+}
+
+// Уничтожение генератора военной базы
+F415_15(int unit)
+{
+  int i;
+  if( LevelNumber==10 && SizeTo(unit,7541,4501) < 100 )
+  { // на 10 урровне первый генератор убивает только одну дверь
+    Destroy( GetSprite(GETSPRITE_VID+164,5697,4734) );
+  }
+  else
+  {
+    for( i=FirstInBox(0,0,MapSizeX(),MapSizeY()); i; i=NextInBox() )
+      if( GetUnitVid(i)==164 )//убираем электрические заборы
+        Action(i,ANI_DEATH,0,0);
+  }
+  // убираем стрелку
+  Destroy(GetSprite(GETSPRITE_VID+912,GetX(unit),GetY(unit)));
+}
+F415_16(int unit) { F415_15(unit); }
+
+// Рождение снаряда 0 пушки
+F751_14(int unit)
+{
+  Action(Flagman(0),ACT_SET_HP,Action(Flagman(0),ACT_GET_HP,10)-10);
+}
+
+
+//использование спасательной аптечки
+F181_14(int unit)
+{
+  int invulnerable;
+  if( StateBar )
+    if( !Action(Flagman(0),ACT_HAVE_ITEM,230) )
+      MenuAction(730,999999,ACT_SET_ARMY,1);//убираем на стэйтбаре аптечку
+  invulnerable = AddInvulnerable();
+  Action(invulnerable,ACT_SET_DEATH_TIMER,3000);
+}

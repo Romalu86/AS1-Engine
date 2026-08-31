@@ -1,0 +1,684 @@
+//функции возвращающие уникальный номер объекта
+extern CreateSprite(int nvid,int x,int y,int z,int dir=0,int parent=0) 65;//создает спрайт
+extern Flagman(int army)                         66;//управляемый в данный момент юнит
+//extern GetObject(int nvid,int x,int y)           67;//объект с nvid в x,y
+extern FirstUnit(int typeunit)                   68;//первый юнит данного типа
+extern NextUnit()                                69;//следующий юнит
+extern GetSprite(int type,int x,int y)           70;//найти спрайт пересекающий координаты x,y, с type (см. #define GETSPRITE_XXX)
+extern GetSpriteScr(int type,int scr_x,int scr_y) 71;// найти спрайт пересекающий экранные координаты scr_x,scr_y, с type (см. #define GETSPRITE_XXX)
+     //найти ближайший спрайт на расстоянии не дальше radius, с type (см. #define GETSPRITE_XXX)
+extern FindNearestSprite(int type,int x,int y,int radius) 72;
+     //найти ближайший спрайт на расстоянии не дальше radius от экранных координат, с type (см. #define GETSPRITE_XXX)
+//extern FindNearestSpriteScr(int type,int scr_x,int scr_y,int radius) 73;
+extern FirstInBox(int left,int top,int right,int bottom) 74;//перебор объектов с P_Map(P_Hash) в прямоугольнике, (координаты не экранные)
+extern NextInBox()                               75;
+extern FirstSprite()                             76;//полный перебор всех спрайтов в игре ОЧЕНЬ МЕДЛЕННО т.к. МНОГО спрайтов
+extern NextSprite()                              77;
+//функции свойств юнитов
+extern Action(int unit,int act,int var1=0,int var2=0,int var3=0) 79;
+extern SizeTo(int unit,int x,int y)              80;//расстояние от юнита до точки
+extern ReCalcGridZ(int unit)                     81;//пересчитать сетку Z с учетом размеров unit
+extern AddCommand(int unit,int act,int var1=0,int var2=0,int var3=0) 82;
+extern GetUnitVid(int unit)                          83;//unit - уникальный номер объекта, возвращает nvid
+extern Destroy(int unit)                         84;//уничтожить unit
+extern GetX(int unit)                            85;//возвращает x координату
+extern GetY(int unit)                            86;//возвращает y координату
+extern GetZ(int unit)                            87;//возвращает z координату
+extern GetDirection(int unit)                    88;//возвращает направление
+extern GetAnimation(int unit)                    89;//возвращает номер проигрываемой анимации
+extern DirectionTo(int unit,int x,int y)         90;//возвращает направление с unit на x,y
+//заменены на act_getcommands, act_setcommands
+extern GetCommands(int unit)                     96;//возвращает строку команд машины
+extern SetCommands(int unit,string com)          97;//устанавливает новые команды из строки комманд
+//управляющие функции
+extern Load(string filename)                     98;//load map
+extern Save(string filename)                     99;//save map
+extern SaveDemo(string filename)                 100;//записать следующий загруженный файл в demo filename
+extern MenuFind(int nvid,int ndir)               101;//вернуть элемент меню с nvid,ndir, если ndir==999999 то с любым ndir
+extern MenuLoad(string filename)                 102;//загрузить меню из файла
+extern MenuRelease()                             103;//удалить все меню
+extern MenuNVidUnderCursor()                     104;//возвращает nvid нажатой кнопки
+extern MenuNDirUnderCursor()                     105;//возвращает ndirect нажатой кнопки
+extern MenuAction(int nvid,int ndir,int action,int var1=0,int var2=0,int var3=0)  106;//Action для всех меню с nvid,ndir, если ndir==999999 для любых ndir
+extern MenuCreate(int nvid,int ndir,int x,int y,int z) 107;//возвращает уникальный номер созданного объекта
+extern MenuLClick()                              108;//над одной из менюшек была нажата левая кнопка мыши
+extern GetInputX()                               109;//возвращает координату мышки
+extern GetInputY()                               110;//возвращает координату мышки
+extern GetKey()                                  111;//возвращает код нажатой кнопки спец коды см. #define VK_XXX
+extern Pause(int flag)                           112;
+extern SetCursor(int type)                       113;//см. #define CURSOR_???
+extern MessageText(string text,int x,int y)      114;//сообщение в окне сообщений на opt_statebar
+extern GetInputState()                           115;//см #define INPUT_???
+extern SetPosition(int x,int y)                  116;//установить место наблюдения на карте
+extern SetScrollType(int type)                   117;//see #define SCROLL_XXX
+extern GetScrollType()                           118;//see #define SCROLL_XXX
+extern ScreenX()                                 119;//Размер окна
+extern ScreenY()                                 120;//Размер окна
+extern SetSelectUnit(int flag)                   121;//если flag==0, то нельзя выбирать новые юниты, для управления
+extern SetStateBar(int flag)                     122;//вкл. выкл. statebar
+extern GetString(string section,string keyword)  123;//берет из strings.ini[strings] строку с keyword
+extern Exit(string next_program="")              124;//выйти в Windows, next_program программа, которую нужно стартовать после завершения данной
+extern ToScreenX(int x)                          125;//конвертирование координаты x в экранную x
+extern ToScreenY(int y,int z=0)                  126;//конвертирование координат y,z в экранную y
+extern MenuRClick()                              127;//над одной из менюшек была нажата правая кнопка мыши
+extern SetMouseClick(int firstOrsecond,int vk_button) 128;//SetMouseClick(INPUT_FIRST,VK_LBUTTON); назначить для first кнопки мыши клик левой кнопкой
+//функции звуко-, видео- эффектов
+extern SetSoundVolume(int volume)                130;//volume=0-100
+extern SetMusicVolume(int volume)                131;//volume=0-100
+extern PlaySFX(int nsfx)                         132;
+extern StopSFX(int nsfx)                         133;//if nsfx==-1 then stop all sfx
+extern StopMusic()                               134;
+extern PlaySFXFromCoor(int nsfx,int x,int y)     135;//проигрывать nsfx в координатах x,y (не экранных)
+extern PlayMusicFile(string file,int loop=1)     136;//проигрывается файл, если loop!=0 то зацикленный
+extern Effect(int effect,int var1,int var2=0,int duration=0) 137;//см. EFF_XXX
+extern SetEnvironment(int env)                   138;
+extern SetGraphDetail(int detail)                139;//0-low,1-high
+extern SetGamma(int gammaindex)                  140;//устанавливает игровую палитру (см. mapedit.exe)
+extern SetWind(int wind,int direct)              141;
+extern PlayMovie(string filename)                142;//начать проигрывание видео
+extern IsPlayMovie()                             143;//return 1, если проигрывается видео
+extern StopMovie()                               144;//прекратить проигрывание видео
+extern IsPlayMusic()                             145;//возвращает не 0 если файл музыки еще проигрывается
+extern CountGamma(int g1, int g2, int time)      146;//посчитать гамму. time=0..255
+//InterpolateGamma(int g1, int g2, int time)
+extern GetGamma()                                147;
+extern GetEffectState(int eff)                   148;//см. EFF_XXX возвращает процент исплонения эффекта 0-100, -1 если эффект в данный момент не выполняется
+//прочие функции
+extern Exec(string command)                      152;//запустить исполняемый файл в Windows
+extern charat(string str, int index)             153;//взять символ
+extern Log(string str)                           154;
+extern Random(int max)                           155;//random 0-max
+extern ChangeZUnit(int vid,int z)                156;//сменить z координату для всех объектов vid
+extern GetTime()                                 157;//возвращает текущее время в 1/1000 секундах
+extern GetGroundZ(int x,int y)                   158;//вернуть Z координату земли в данной точке (координаты не экранные)
+extern strlen(string str)                        159;
+extern SetFlagman(int narmy,int unit)            160;//Делает флагманом новую машину
+extern AskPlace(int vid,int x,int y,int z)       161;//можно ли поместить данный unit в данные координаты, возвращает мешающий unit
+extern GetVidData(int nvid,int type)             162;//вернуть параметр из вида,см.VID_XXX
+extern SetVidData(int nvid,int type,int var)     163;//изменить параметр внутри вида,см.VID_XXX, см. NVID_XXX
+extern itoa(int val)                             164;//преобразовать int в string
+extern Sin(int angle)                            165;//sin(angle)*1024, angle - 0-256
+extern Cos(int angle)                            166;//cos(angle)*1024, angle - 0-256
+extern MapSizeX()                                167;//размер карты
+extern MapSizeY()                                168;//размер карты
+extern Genocide(int nvid)                        169;//уничтожить все объекты nvid на карте
+extern ReplaceUnit(int nvid1,int nvid2)          170;//заменить все объекты nvid1 на карте объектами nvid2
+//extern SetHpCoeff(int nvid,int narmy,int hp_percent) 171;//устанавливает для nvid армии narmy коэффициент для увеличения(уменьшения) хитпойнтов
+extern Printf(string format,int int_or_string)   172;//аналог sprintf, но с одним параметром
+extern ReloadVid()                               173;//перегружает все vid параметры
+//работа с save,load
+extern FWrite(int file,int variable)             174;//добавить в файл file переменную variable
+extern FRead(int file)                           175;//восстановить из файла file переменную
+extern FOpen(string filename)                    176;//открыть файл возвращает уникальный номер файла
+extern FClose(int file)                          177;//закрыть файл
+extern FCreate(string filename)                  178;//создать файл, возвращает уникальный номер файла
+extern FEof(int file)                            179;//возвращает 1 если конец файла
+//extern PrintText(int x,int y,int z,string text,int font) 180;//напечатать текст на экран, возвращает уникальный номер текста
+//extern PrintFile(int x,int y,int z,string filename,int font) 181;//напечатать текстовой файл на экран,
+extern GetReg(string path,string name,string def_value)182;//возвращает строку из реестра
+extern SetReg(string path,string name,string value)    183;//устанавливает строку в реестре
+extern DelReg(string path,string name)                 184;//удаляет строку в реестре
+extern GetDefaultRegPath()                             185;//возвращает путь в реестре из game.cfg RegPath
+//функции работы по сети
+extern GetNetInfo(int type)                      192;//возвращает параметры сетевой игры см #define NET_???
+extern Send(int data)                            193;//передает по сети data
+extern Receive()                                 194;//возвращает по сети data
+extern SetNet(int flag)                          195;//если flag!=0 то устанавливается сетевая игра
+extern GetNetKey(int nplayer)                    196;//возвращает код нажатой кнопки у сетевого игрока nplayer
+extern GetNetInputState(int nplayer)             197;//см #define INPUT_???
+//функции AI
+extern GetStatistics(int narmy,int stat)         210;//см #define STAT_
+extern CalcStatistics(int begx,int begy,int endx,int endy,int stat) 211;
+       //разность ваших и вражеских войск в регионе,см #define STAT_
+extern TrainProperty(int train,int property)     212;//см. PROP_
+//функции Ж/Д
+//extern GetRailway(int x, int y)                  230;//возвращает ближний 
+extern SetSemaphore(int x, int y, int newsemaphore, int army)  231;//устанавливает семафор рельсу
+                                                                   //newsemaphore - 0-пропускает в обе стороны, 1-только вправо, 
+                                                                   //2-только влево, 3-в обе стороны не пропускает
+extern BreakTrain(int unit,int x,int y)      239;//разбить состав в точке x,y на данном юните
+extern FirstTrain(int army) 240;//функции, предназначенные для перебора составов
+extern NextTrain()          241;
+
+extern PatrolEngine(int train, int x, int y) 242;//патрулировать в точку
+// Устанавливает линию по одностороннему прохождению составов от begin, к end
+// в обратном направлении составы ехать не могут, все координаты экранные
+// если push_flag==1 то состав будет проталкиваться по этой линии силой
+extern SetPushLine(int begin_x,int begin_y,int end_x,int end_y,int push_flag) 243;
+//extern IsMovingToRepair(int train)           243;//проверить, движется ли состав в мастерскую
+
+extern GetScreenInputX()    244;//возвращает экранную координату мышки
+extern GetScreenInputY()    245;//возвращает экранную координату мышки
+
+extern SetCleverEnemyAttack(int newval)     246;//включает/выключает умную атаку 
+                                           //вражеских юнитов
+extern SetAutoReBirth(int newval)247;//включает/выключает автовосстановление
+                                     //зданий
+extern PatrolEngineToPoints(int train, int x, int y, int x2, int y2) 248;//патрулировать в точки
+
+extern AddUnitLimit(int army, int engine_nvid,int value) 249;//добавить лимит определенного юнита на карте
+//     engine_nvid - номер вида юнита.
+//     если army==255, то ограничение распространЯетсЯ на каждую армию.
+//     если engine_nvid==255, то ограничение распространЯетсЯ на каждый юнит.
+//     если value==-1, то ранее созданное ограничение с такими же army и engine_nvid
+//     стирается (если оно, конечно, было создано ранее).
+//     все лимиты с хотя бы одним параметром 255 должны идти раньше всех остальных
+
+extern SetEnemyCanAttackNeutralTrains(int newval) 250;
+//могут ли на уровне враги атаковать нейтралов
+extern SetMoney(int army,int money) 251;//выставить армии army количество денег money
+extern GetMoney(int army)           252;//сколько денег осталось у армии
+extern CanMoveEngineTo(int engine,int x,int y) 253;//может ли паровоз проехать в точку
+extern CanAttackEngine(int engine,int enemy) 254;//может ли паровоз доехать до места с которого атакует enemy
+
+
+//некоторые возвращаемые GetKey() значения
+#define VK_LBUTTON        0x01
+#define VK_RBUTTON        0x02
+#define VK_CANCEL         0x03
+#define VK_MBUTTON        0x04    /* NOT contiguous with L & RBUTTON */
+#define VK_BACK           0x08//00
+#define VK_TAB            0x09
+
+#define VK_CLEAR          0x0C
+#define VK_RETURN         0x0D
+
+#define VK_ESCAPE         0x1B
+
+#define VK_SPACE          0x20
+#define VK_PRIOR          0x2100
+#define VK_NEXT           0x2200
+#define VK_END            0x2300
+#define VK_HOME           0x2400
+#define VK_LEFT           0x2500
+#define VK_UP             0x2600
+#define VK_RIGHT          0x2700
+#define VK_DOWN           0x2800
+#define VK_SELECT         0x2900
+#define VK_PRINT          0x2A00
+#define VK_EXECUTE        0x2B00
+#define VK_SNAPSHOT       0x2C00
+#define VK_INSERT         0x2D00
+#define VK_DELETE         0x2E00
+#define VK_HELP           0x2F00
+#define VK_NUMPAD0        0x6000
+#define VK_NUMPAD1        0x6100
+#define VK_NUMPAD2        0x6200
+#define VK_NUMPAD3        0x6300
+#define VK_NUMPAD4        0x6400
+#define VK_NUMPAD5        0x6500
+#define VK_NUMPAD6        0x6600
+#define VK_NUMPAD7        0x6700
+#define VK_NUMPAD8        0x6800
+#define VK_NUMPAD9        0x6900
+#define VK_MULTIPLY       0x6A00
+#define VK_ADD            0x6B00
+#define VK_SEPARATOR      0x6C00
+#define VK_SUBTRACT       0x6D00
+#define VK_DECIMAL        0x6E00
+#define VK_DIVIDE         0x6F00
+#define VK_F1             0x7000
+#define VK_F2             0x7100
+#define VK_F3             0x7200
+#define VK_F4             0x7300
+#define VK_F5             0x7400
+#define VK_F6             0x7500
+#define VK_F7             0x7600
+#define VK_F8             0x7700
+#define VK_F9             0x7800
+#define VK_F10            0x7900
+#define VK_F11            0x7A00
+#define VK_F12            0x7B00
+#define VK_F13            0x7C00
+#define VK_F14            0x7D00
+#define VK_F15            0x7E00
+#define VK_F16            0x7F00
+#define VK_F17            0x8000
+#define VK_F18            0x8100
+#define VK_F19            0x8200
+#define VK_F20            0x8300
+#define VK_F21            0x8400
+#define VK_F22            0x8500
+#define VK_F23            0x8600
+#define VK_F24            0x8700
+
+#define VK_NUMLOCK        0x90
+#define VK_SCROLL         0x91
+
+
+//Параметры для GetStatistics(), CalcStatistics()
+#define STAT_TRAIN                   1//количество составов общее
+#define STAT_MOBILE_TRAIN            2//количество составов с паровозами
+#define STAT_AVIA                    3//количество авиаюнитов
+#define STAT_SUPER_WEAPON            4//количество дальнобойного тяжелого оружия
+#define STAT_ANTI_AVIA               5//количество противовоздушных юнитов
+#define STAT_BATTLE_TRAIN            6//количество составов с паровозами, вооруженных, оснащенных
+#define STAT_AGRESSIVE_TRAIN         7//количество поездов, которые на данный момент имеют цель атаку
+#define STAT_VERYDANGER_TRAIN        8//количество ОЧЕНЬ опасных для противника составов (мера опасности только в тестировании подбирается)
+#define STAT_PATROL_TRAIN            9//количество патрулирующих составов
+#define STAT_PASSIVE_TRAIN          10//количество пассивных составов
+#define STAT_WORKING_DEPO           11//количество работающих депо
+#define STAT_FREE_DEPO              12//количество простаивающих депо
+#define STAT_ACTIVE_FORT_GUN        13//количество целых пушек у фортов
+#define STAT_DAMAGED_FORT_GUN       14//количество разбитых пушек у фортов
+#define STAT_LIFE                   15//суммарное количество хитпоинтов
+#define STAT_ENGINE_GUN_POWER       16//суммарное количество неких единиц, полученных по формуле: 
+//сумм_по_каждому_жд_юниту(кол_во_патронов*вред_от_каждого_патрона/время_перезарядки*дальность*коэфф_общий*коэфф_юнита)
+#define STAT_AVIA_GUN_POWER         17//то же по авиаюнитам
+#define STAT_ANTIAVIA_GUN_POWER     18//то же по противовоздушным юнитам
+#define STAT_GROUND_GUN_POWER       19//то же по наземным юнитам
+#define STAT_ALL_GUN_POWER          20//то же по всем юнитам
+#define STAT_DAMAGED_UNITS          21//по раненым юнитам
+
+//параметры для TrainProperty
+#define PROP_SPEED                   1 //сможет двигаться с данной скоростью
+#define PROP_WEAPON                  2 //огневая мощь с учетом количества патронов
+#define PROP_LIFE                    3 //возвращает оставшуюся жизнь (в процентах)
+#define PROP_HP                      4 //возвращает оставшуюся жизнь в hp
+#define PROP_AMMO                    5 //возвращает количество патронов (в процентах)
+#define PROP_ACCELERATE              6 //ускорение с которым сможет двигаться состав
+#define PROP_BUILD_TIME              7 //время строительства данного состава
+#define PROP_FREE                    9 //не занят
+#define PROP_AMMO_NO                 10//возвращает количество патронов у состава
+#define PROP_AMMO_MAX                11//возвращает максимальное количество патронов у состава
+
+//type for SetScrollType()
+#define SCROLL_NONE          0 //не скроллируется
+#define SCROLL_FROM_BORDER   1 //скроллируется при подходе курсора к границам экрана 
+#define SCROLL_WITH_MOUSE    2 //таскает экран нажатой правой кнопкой мыши
+#define SCROLL_TO_FLAGMAN    4 //скроллируется к Flagman()
+#define SCROLL_TO_FLAGMAN_WITH_DIRECTION 8 //скроллируется к Flagman() с учетом направления Flagman() и его Link()
+#define SCROLL_FLAGMAN_IN_CENTER 16 //держит Flagman() всегда в центре экрана
+#define SCROLL_WITH_ARROWS   32// скроллирует экран в сторону нажатых мышиных клавиш
+
+//type for SetVidData, GetVidData
+#define VID_MAXHP       1
+#define VID_GAMMA       18 //18-21
+#define VID_PROPERTY    22
+#define VID_BATTLERANGE 23 //радиус действия оружия
+#define VID_MAXUNIT     25 //Ограничение максимального количества юнитов на карте
+#define VID_AMMO        26 //максимальное количество патронов
+#define VID_NAME        27 //название объекта
+#define VID_COUNT       28 //количество юнитов данного типа присутствующих на карте
+#define VID_KILLEDUNIT  29 //сколько раз данный объект убивали
+#define VID_KILLEDUNIT0 30 //сколько раз данный объект армии 0 убивали
+#define VID_KILLEDUNIT1 31 //сколько раз данный объект армии 1 убивали
+#define VID_KILLEDUNIT2 32 //сколько раз данный объект армии 2 убивали
+#define VID_KILLEDUNIT3 33 //сколько раз данный объект армии 3 убивали
+#define VID_COUNT0      34 //количество юнитов данного типа армии 0 присутствующих на карте
+#define VID_COUNT1      35 //количество юнитов данного типа армии 1 присутствующих на карте
+#define VID_COUNT2      36 //количество юнитов данного типа армии 2 присутствующих на карте
+#define VID_COUNT3      37 //количество юнитов данного типа армии 3 присутствующих на карте
+#define VID_MAXHP0      38
+#define VID_MAXHP1      39
+#define VID_MAXHP2      40
+#define VID_MAXHP3      41
+#define VID_HP_COEFF0   42 //коэффициент для изменения maxHp (в процентах)
+#define VID_HP_COEFF1   43 //коэффициент для изменения maxHp (в процентах)
+#define VID_HP_COEFF2   44 //коэффициент для изменения maxHp (в процентах)
+#define VID_HP_COEFF3   45 //коэффициент для изменения maxHp (в процентах)
+#define VID_SPRITETYPE  46 //возвращает vid->spriteType см. #define U_
+#define VID_CLASS       47 //возвращает vid->spriteClass см. #define B_
+#define VID_SPEED       48 //скорость юнита
+#define VID_LIFETIME    49 //время жизни юнита (в 1/1000sec)
+#define VID_DETECTRANGE 50 //радиус обнаружения врага (в пикселях)
+#define VID_WEAPONAIM   51 //точность пападания
+#define VID_EXCHANGEVID 52 //меняет местами Vid-ы
+#define VID_NO_DIR      53 //возвращает число направлений
+#define VID_MOVE_MASK   54 //меняет moveMask
+#define VID_BUILDTIME   55 //время строительства юнита
+#define VID_HIDE        56 //установить выводить или нет данный VID на экран
+#define VID_NOT_CREATE_AS_CHILD  57 //данный VID не будет создаваться в качестве дочернего или линкованного
+#define VID_FRAME_SPEED 58 //установить скорость проигрывания флика
+#define VID_LINK        59 //номер VID для прилинкованного к данному
+#define VID_CHILD       60 //60-91
+#define VID_NO_CHILD    92 //92-123
+#define VID_DAMAGE      124//количество поврежедений наносимых окружающим при смерти юнита
+#define VID_RECOLORUNIT  125 //сколько раз данный объект перекрашивали
+#define VID_RECOLORUNIT0 126 //сколько раз данный объект армии 0 перекрашивали
+#define VID_RECOLORUNIT1 127 //сколько раз данный объект армии 1 перекрашивали
+#define VID_RECOLORUNIT2 128 //сколько раз данный объект армии 2 перекрашивали
+#define VID_RECOLORUNIT3 129 //сколько раз данный объект армии 3 перекрашивали
+
+//sprite command constant
+#define COM_NONE        0 // спрайт не выполняет команду в данный момент
+      //команды нуждающиеся в установке goal, в качестве цели
+#define COM_MOVE        1 // двигаться к цели
+#define COM_MOVE3D      2 // двигаться к цели по всем 3 координатам
+#define COM_ATTACK      3 // подъехать и атаковать до уничтожения goal
+#define COM_ONEATTACK   4 // подъехать и однократно атаковать
+#define COM_DISTATTACK  5 // атаковать в направлении цели, не подъезжая к ней
+#define COM_NEARATTACK  6 // атаковать цель только если она в зоне досягаемости
+#define COM_PATROL      7 // патрулировать область до goal и обратно
+#define COM_TARAN       8 // таран другого юнита
+      //команды не нуждающиеся в установке goal
+#define COM_BUILD      16 // для строительства юнитов заводами
+#define COM_PASSIVE    17 // для пассивных юнитов
+#define COM_PAUSE      18 // юнит стоит пока timer не обнулится
+#define COM_ROTATE     19 // юнит вращается до нового new_direction
+#define COM_OTHER      31
+
+      //нужна R_DOT в качестве цели
+#define COM_ENGINE_MOVE      23 // двигается к точке
+#define COM_ENGINE_MINE      24 // двигается к точке и минирует ее
+#define COM_ENGINE_PATROL    25 // патрулирует от точки patrolto1 к patrolto2
+      //команды нуждающиеся в установке goal, в качестве цели
+#define COM_ENGINE_LINK      26 // сцепляется с goal
+#define COM_ENGINE_CLASH     27 // таранит goal
+#define COM_ENGINE_ATTACK    28 // подъезжает к goal на расстояние выстрела и атакует goal до уничтожения
+#define COM_ENGINE_ONEATTACK 29 // подъезжает к goal на расстояние выстрела и однократно стреляет
+
+//type for GetSprite,GetSpriteScr,FindNearestSprite
+#define GETSPRITE_VID     0x800      //+nvid
+#define GETSPRITE_CLASS   0x1000     //+B_XXX
+      // добавляемые к другим типы
+#define GETSPRITE_HASH    0x8000     // ищет спрайты с P_Hash(P_Map)
+#define GETSPRITE_ARMY0   0x10000    // ищет спрайты с army==0
+#define GETSPRITE_ARMY1   0x20000    // ищет спрайты с army==1
+#define GETSPRITE_ARMY2   0x40000    // ищет спрайты с army==2
+#define GETSPRITE_ARMY3   0x80000    // ищет спрайты с army==3
+#define GETSPRITE_TERRAIN 0x100000   // ищет спрайты с spriteType==U_TERRAIN
+#define GETSPRITE_OBJECT  0x200000   // ищет спрайты с spriteType==U_OBJECT
+#define GETSPRITE_UNIT    0x400000   // ищет спрайты с spriteType==U_UNIT
+#define GETSPRITE_AVIA    0x800000   // ищет спрайты с spriteType==U_AVIA
+#define GETSPRITE_MENU    0x1000000  // ищет спрайты с spriteType==U_MENU
+#define GETSPRITE_RAILWAY 0x2000000  // ищет спрайты с spriteType==U_RAILWAY
+#define GETSPRITE_REGION  0x4000000  // ищет спрайты с spriteType==U_REGION
+#define GETSPRITE_CANNON  0x20000000 // ищет спрайты с spriteType==U_CANNON
+#define GETSPRITE_SPRITE  0x40000000 // ищет спрайты с spriteType==U_SPRITE
+#define GETSPRITE_FREE    0x80000000 // ищет спрайты с stateCommand==COM_NONE
+GETSPRITE_ARMY(int army) { return GETSPRITE_ARMY0*(army+1); }
+GETSPRITE_TYPE(int type) { return GETSPRITE_TERRAIN*type; }//ищет спрайты с spriteType & t
+
+//type for GetNetInfo
+#define NET_NUMPLAYER    1  //возвращает номер игрока при сетевой игре
+#define NET_NAMEPLAYER   2  //возвращает имя игрока при сетевой игре
+#define NET_NOPLAYER     6  //возвращает количество игроков в сети
+#define NET_CLEARKILL    9  //обнулить счетчики убитых
+#define NET_KILLPLAYER   10 //10-25 возвращает число убитых 10-13 1ым игроком, 14-17 2ым игроком,18-21 3им, 22-25 4ым
+
+//type for SetCursor
+#define CURSOR_OFF      -1  //выключить курсор
+#define CURSOR_NORMAL    0
+#define CURSOR_MOVE      2
+#define CURSOR_CLASH     3  //для таранящего движения
+#define CURSOR_ATTACK    5
+#define CURSOR_FIGHT     5
+#define CURSOR_FIGHT2    6
+#define CURSOR_SELECT    7
+#define CURSOR_NOTMOVE   8
+#define CURSOR_CYCLE     9  //зацикливание движения
+#define CURSOR_LINK      10 //сцепить вагоны
+#define CURSOR_UNLINK    11 //расцепить вагоны
+#define CURSOR_DELETE    15 //для удаления в MapEdit
+
+//for Effect()
+#define EFF_NONE         0 //убрать все проигрываемые в данный момент эффекты
+#define EFF_NUKE         1 //вспышка цвета var1
+#define EFF_SCROLL       2 //плавный сдвиг окна в координаты var1,var2
+#define EFF_FADE         3 //плавное затенение экрана
+#define EFF_OPEN_WINDOW  4 //развертка экрана из var1,var2 к нормальному размеру
+#define EFF_ALPHAAPPEAR  5 //плавный переход через альфу от экрана, который был в
+                           //момент подачи команды Effect, к текущему экрану
+#define EFF_PIXELAPPEAR  6
+#define EFF_LINESHIFT    7
+#define EFF_SCALE_WINDOW 8 //масштабирование экрана из var1,var2 к нормальному размеру
+#define EFF_FADE_IN      9 //плавное затенение экрана
+#define EFF_FADE_OUT     10//плавное просветление экрана из темноты
+
+//for SetEnvironment()
+#define ENV_SHADOW     1
+#define ENV_LONGSHADOW 2
+#define ENV_EARTHQUAKE 4
+//#define ENV_SNOWSTORM  8
+#define ENV_FOG        32
+#define ENV_GROUND_SNOW 64    //снег на земле
+#define ENV_SQUALL     128    //временный порыв ветра
+#define ENV_FOGINV     0x0100 //инвертированный туман
+#define ENV_FOGAPPEAR  0x0200 //медленно рождающийся и исчезающий туман
+#define ENV_STOP_RAIN  0x0400 //медленная остановка дождя
+#define ENV_BORN_RAIN  0x0800 //медленное рождение дождя
+#define ENV_RAIN       0x0C00 //идет дождь
+#define ENV_MASK_RAIN  0x0C00 //маска для дождей
+#define ENV_STOP_SNOW  0x4000 //медленная остановка снега
+#define ENV_BORN_SNOW  0x8000 //медленное рождение снега
+#define ENV_SNOW       0xC000 //идет снег
+#define ENV_MASK_SNOW  0xC000 //маска для снега
+#define ENV_STOP       0x80000000
+#define ENV_STOPALL    0xFFFFFFFF
+
+#define INPUT_LCLICK     1
+#define INPUT_RCLICK     2
+#define INPUT_LDOWN      4
+#define INPUT_RDOWN      8
+#define INPUT_SHIFT      16
+#define INPUT_CTRL       32
+#define INPUT_LEFT       64
+#define INPUT_RIGHT      128
+#define INPUT_UP         256
+#define INPUT_DOWN       512
+#define INPUT_FIRST      1024       
+#define INPUT_SECOND     2048       
+
+//for ACT_SET_BEHAVE, ACT_GET_BEHAVE
+#define BEH_AGGRESSIVE  1//когда враг находится в зоне действия оружия его атакуют
+#define BEH_ACTIVE      2//когда объект атакуем или видит врага,
+                         //но не может его атаковать он движется
+#define BEH_CAREFUL     4//
+#define BEH_HAUNT       8//когда объект видит врага, он все бросает и
+                         //начинает его преследовать
+#define BEH_BIGFIRE     16//возможность самостоятельной стрельбы из супер-оружия
+
+//дефайны для определения поведения текстов, for ACT_SET_BEHAVE, ACT_GET_BEHAVE
+#define BEH_LEFT            0 // выравнивание по левому краю
+#define BEH_CENTER_X        1 // выравнивание по центру
+#define BEH_RIGHT           2 // выравнивание по правому краю
+#define BEH_TOP             0 // выравнивание по верху
+#define BEH_BOTTOM          4 // выравнивание по низу
+#define BEH_CENTER_Y        8 // выравнивание по центру
+#define BEH_CENTER          (BEH_CENTER_X+BEH_CENTER_Y)
+#define BEH_LOAD_FROM       (16+32+64) //маска для типа загрузки
+#define BEH_NOT_LOAD        (0*16) // не загружает текст просто выводит строку text
+#define BEH_STRINGS_INI     (1*16) // загрузка из Strings.ini с keyword==text
+#define BEH_FILE            (2*16) // загрузка из файла с именем text
+#define BEH_SCRIPT_VARIABLE (3*16) // загрузка из переменной в скрипте с именем text
+#define BEH_SCRIPT_FILE     (4*16) // загрузка из переменной в скрипте с именем файла
+#define BEH_SCRIPT_STRINGS  (5*16) // загрузка из переменной в скрипте с keyword для strinfs.ini
+#define BEH_SCRIPT_UPDATED  (6*16) // загрузка из переменной в скрипте непрерывно а не при создании строки
+    
+
+//new
+#define U_TERRAIN    1 //земля, элементы ландшафта
+#define U_OBJECT     2
+#define U_UNIT       4 //наземные юниты, монстры
+#define U_AVIA       8 //летающие юниты
+#define U_MENU      16 //различные элементы меню
+#define U_RAILWAY   32 //рельсы, дорожки, трубы, ...
+#define U_REGION    64 //прямоугольные регионы воды, тумана, ...
+#define U_TACTIC   128 //режим в мапедите, для редактирования тактики
+//следующие не выставляются в мапедите
+#define U_CANNON   512 //снаряды, дымы, ...
+#define U_SPRITE  1024 //в основном прилинкованные объекты
+
+//spriteClass
+#define B_TERRAIN    0
+#define B_OBJECT     1
+#define B_UNIT       2
+#define B_BUILDING   3
+#define B_AVIA       4
+#define B_CANNON     5
+#define B_PRIMITIVE  6 //максимально упрощенный, но самый быстро-обрабатываемый спрайт
+#define B_SPRITE     9
+#define B_FRAME     10
+#define B_LINKER    12
+#define B_TEXT      19
+#define B_CIV_ROBOT 20
+#define B_ENGINE    21
+#define B_RAIL      22
+#define B_REGION    23
+#define B_DEPO      24
+#define B_CREATURE  25
+#define B_BALLOON   26
+#define B_MISSILE   27
+
+
+#define ANI_STAND             0
+#define ANI_STOP_MOVE         1
+#define ANI_BUILD             1
+#define ANI_GO                2
+#define ANI_START_MOVE        3
+#define ANI_L_ROTATE          4
+#define ANI_R_ROTATE          5
+#define ANI_OPEN              6
+#define ANI_HIT               7//объект поврежден(ударен)
+#define ANI_CLOSE             7
+#define ANI_FIGHT             8
+#define ANI_SALUT             9
+#define ANI_STAND_OPEN       10
+#define ANI_LOAD             11
+#define ANI_LINK             11
+#define ANI_UNLOAD           12
+#define ANI_LAZY             12
+#define ANI_CLASH            12
+#define ANI_WOUND            13
+#define ANI_BIRTH            14
+#define ANI_DEATH            15
+#define ANI_DEATH2           16 //смерть от повреждений больших половины maxHp за раз
+#define ANI_MENUSTANDDOWN     0 //action for menu button
+#define ANI_MENUSTANDUP       1
+#define ANI_MENUSELECTDOWN    2
+#define ANI_MENUSELECTUP      3
+#define ANI_MENUPRESSDOWN     4
+#define ANI_MENUPRESSUP       5
+#define ANI_MENUDISABLE       6 //кнопка не работает
+#define ANI_MENUDISABLEDOWN   6 //кнопка не работает
+#define ANI_MENUDISABLEUP     7 //кнопка не работает
+#define ANI_FONT_NORMAL       0
+#define ANI_FONT_NEXT_CHAR    1 //вывод следующего символа
+#define ANI_FONT_NEXT_LINE    2 //переход к выводу следующей строки
+
+//команды для юнита
+#define ACT_ATTACK           32 //атака (MONSTER*)var1
+#define ACT_MOVE             33 //var1-x,var2-y
+#define ACT_MOVE_TO          34 //var1-(SPRITE*)target
+#define ACT_BUILD_UNIT       35 //var1-nvid for building unit
+#define ACT_PATROL           36 //var1-x,var2-y патрулировать до точки x,y и обратно
+#define ACT_COOR_ATTACK      37 //одиночный выстрел по координатам var1,var2
+#define ACT_RANDOM           38 //выполнить либо лэзи, либо просто повернуть голову, либо ничего не сделать
+#define ACT_STOP             39 //прекратить выполнение любой команды, если var1 не равно 0, то немедленно затормозить
+#define ACT_PAUSE            40 //ничего не делать var1 + Random(var2) ms
+#define ACT_ROTATE           41 //повернуться в направлении var1
+#define ACT_CLEAR_COMMAND    42 //прекратить выполнение текущей команды
+#define ACT_FLAGMAN_TRIGGER  43 //не продолжать выполнять команды стека пока Flagman(0)->NearestDistance(var1,var2) > var3
+//вызываются при движении из MoveTact()
+#define ACT_PATH_BLOCK       50 //path is blocked var1-last dx, var2 -last dy
+#define ACT_PATH_GROUND      51 //когда объект пересекается с землей var1-new_z, var2-ground_z
+#define ACT_PATH_LIMIT       52 //при движении объект вышел за границы карты
+//работа со списком vid-ов items (только для UNIT и их порождений)
+#define ACT_ADD_ITEM         54 //var1=nvid
+#define ACT_DELETE_ITEM      55 //var1=nvid
+#define ACT_HAVE_ITEM        56 //имеется вещь var1=nvid
+#define ACT_DELETE_ALL_ITEM  57
+#define ACT_GET_ITEM         58 //возвращает вещь в слоте var1
+//
+#define ACT_CHANGE_DIRECTION 60 //var1=new direction
+#define ACT_CHANGE_ANIMATION 61 //var1=new animation
+#define ACT_CHANGE_VID       62 //изменить текущий vid для спрайта, var1- new vid, var2 - new animation, if var2==-1 animation not changed
+#define ACT_CHANGE_COOR      63 //var1-x,var2-y,var3-z
+//работа со стеком команд actionStack
+#define ACT_BACKUP_COMMAND   70 //поместить выполняемую в данный момент команду в actionStack
+#define ACT_CYCLE_STACK      71 //зацикливание стэка комманд, var1-номер команды к которой нужно перейти
+#define ACT_CLEAR_STACK      72 //очистить actionStack
+#define ACT_STOP_STACK       73 //данная команда останавливает выполнение дальнейших команд в стэке (нужно для building)
+//для Save(), Load()
+#define ACT_SAVE             80 //записать информацию относящуюся к данному спрайту в var1(STREAM*)
+#define ACT_RESTORE          81 //восстановить информацию относящуюся к данному спрайту из var1(STREAM*)
+//работа с hp
+#define ACT_DAMAGE           85 //var1-damage,var2-unit вызвавший damage,if return 1  then ремонт не нужен
+#define ACT_REPAIR           86 //полностью восстановить hp и снесенную башню
+#define ACT_GET_HP           87 //возвращает hp юнита
+#define ACT_SET_HP           88 //var1 - новое количество hp, var2 - количество hp в процентах от максимума(если var1==0)
+#define ACT_GET_PERCENT_HP   89 //возвращает hp юнита в процентах
+//Get и Set команды
+#define ACT_GET_GOAL         90
+#define ACT_GET_ANIMATION    91 //return current animation
+#define ACT_GET_AMMO         92 //вернуть количество снарядов, var1- номер оружия
+#define ACT_ADD_AMMO         93 //var1-число добавляемых снарядов,var2-номер оружия,return количество получившихся
+#define ACT_GET_BEHAVE       94 //return behave
+#define ACT_SET_BEHAVE       95 //var1 -new behave
+#define ACT_GET_ARMY         96 //return-narmy
+#define ACT_SET_ARMY         97 //var1-narmy
+#define ACT_SET_INVISIBLE    98 //var1 -  1-invisible, 0-visible
+//#define ACT_GET_STATE      98 //return-state
+//#define ACT_SET_STATE      99 //var1-new state
+#define ACT_GET_BATTLE_RANGE 100// возвращает Battlerange юнита (с учетом наличия link)
+#define ACT_GET_LINK         101// Возвращает спрайт прилинкованный к данному
+#define ACT_SET_LINK         102// Прилинковывает var1 к данному
+#define ACT_GET_UPLINK       103// Возвращает спрайт, к которому прилинкован к данный
+#define ACT_SET_UPLINK       104// Отлинковывает данный спрайт от родителя
+#define ACT_GET_TIMER        105// вернуть значение счетчика времени
+#define ACT_SET_TIMER        106// установить значение счетчика времени
+//#define ACT_SET_GOD_MODE   103
+//#define ACT_GET_GOD_MODE   104
+#define ACT_GET_ZSPEED       107 //return-zSpeed
+#define ACT_SET_ZSPEED       108 //var1-new zSpeed
+#define ACT_GET_SPEED        109 //return-speed
+#define ACT_SET_SPEED        110 //var1-new speed
+#define ACT_GET_COMMAND      111 //возвращает выполняемую в данный момент COM_XXX
+#define ACT_SET_DEATH_TIMER  112 //устанавливает время через которое спрайт умрет, если 999999, то выключить таймер
+//Get и Set команды для класса STEXT
+#define ACT_SET_TEXT         120//var1-STRING *
+#define ACT_GET_TEXT         121//return-STRING *
+#define ACT_SET_TEXT_COUNT   122//var1=число выводимых в данный момент символов
+#define ACT_SET_FILE         123//var1-(STRING *)filename
+//прочие
+#define ACT_NEXT_COMMAND     130//вызывается каждый раз при окончании проигрывания анимации у спрайтов
+#define ACT_LOGIC_RUN        131//запускает LogicRun(var1,this)
+#define ACT_UNDO_REMOVE      132//нужны для реализации Undo в MapEdit, они устанавливают
+#define ACT_UNDO_INSERT      133//либо удаляют юнит на экран не удаляя его реально
+#define ACT_DESTROY_UNIT     134//var1-nvid уничтожаемого объекта, var2,var3 -координаты где уничтожить
+#define ACT_PLAY_SFX         135//var1 - номер играемого sfx
+
+//#define ACT_SELECT         44 //вызывает на самом деле act_salut
+//#define ACT_CHANGECOOR_Z   69 //var1-z
+
+//#define ACT_SETBUILDTIME   77 //var1-buildtime
+//#define ACT_GETBUILDTIME   78 //return-buildtime
+
+//для паровозов
+#define ACT_LINK_ENGINE      150 //var1-engine
+#define ACT_CLASH_ENGINE     151 //таран var1-engine
+#define ACT_FORCELINK_ENGINE 152 //var1-engine для сцепки разцепленных составов
+#define ACT_TRAIN_BEHAVE     153 //установить тип поведения состава, var1-см. #define TRAINBEHAVE_XXX
+#define ACT_FIRST_ENGINE     154 // первый     энжин в составе
+#define ACT_LAST_ENGINE      155 // последний  энжин в составе
+#define ACT_NEXT_ENGINE      156 // следующий  энжин в составе
+#define ACT_IS_FIRST         157 // первый ли вагон в составе
+#define ACT_IN_TRAIN         158 // присутствует ли engine в составе (var1 - искомый engine)
+#define ACT_IS_TRAIN         159 // является ли спрайт паровозом
+
+#define ACT_NONE             255 //невыполняемая, пустая команда
+
+
+//некоторые вспомогательные функции
+
+//создает спрайт с текстом text, font_vid - обязательно с B_TEXT
+CreateText(int font_vid,int x,int y,int z,string text,int behave=0)
+{
+  int sprite;
+  sprite = CreateSprite(font_vid,x,y,z);
+  Action(sprite,ACT_SET_TEXT,&text);
+  Action(sprite,ACT_SET_BEHAVE,behave);
+  return sprite;
+}
+//создает спрайт и загружает в него текст из файла filename,, font_vid - обязательно
+//с B_TEXT, в файле ESCnn - означает смену фонта
+CreateTextFromFile(int font_vid,int x,int y,int z,string filename, int behave=0)
+{
+  int sprite;
+  sprite = CreateSprite(font_vid,x,y,z);
+  Action(sprite,ACT_SET_FILE,&filename);
+  Action(sprite,ACT_SET_BEHAVE,behave);
+  return sprite;
+}
+

@@ -1,0 +1,47 @@
+#define MUSIC0 "music\\mus01.ogg"
+#define MUSIC1 "music\\mus02.ogg"
+
+#include "maps\export.lgc"
+#include "maps\common.lgc"
+#include "maps\common_compaign.lgc"
+
+
+
+main()
+{
+  static int start_time;
+  static int text=0;
+  iff(1)
+  {
+    start_time = GetTime();
+//    InitGame();
+    PlayMusicFile("music\\end.ogg",0);
+    DoorsIsOpen = 0;
+    SetFlagman(0,FindNearestSprite(GETSPRITE_VID+925,500,500,3000));
+    SetScrollType(SCROLL_TO_FLAGMAN);
+    SetCursor(CURSOR_OFF);
+  }
+//  if( GameTact() )
+//    return;
+  iff( ( (GetTime()-start_time)>10000 && (GetKey()==' ' || (GetInputState()&(INPUT_LCLICK|INPUT_RCLICK))) ) )
+  {
+    if( !text )
+      text = CreateText(3,ScreenX()/2,ScreenY()/2,0,GetString("menu","GameOver"),BEH_CENTER);
+    LoadNextMap( "maps\\mainmenu.map" );
+  }
+  iff( SizeTo(Flagman(0),1907,-126) < 100 )
+  {
+    if( !text )
+      text = CreateText(3,ScreenX()/2,ScreenY()/2,0,GetString("menu","GameOver"),BEH_CENTER);
+  }
+  iff( text && (GetTime()-start_time) > 20000 )
+  {
+    LoadNextMap( "maps\\mainmenu.map" );
+  }
+  if( StartNextMap )
+    if( GetEffectState(EFF_FADE) > 45 )
+    {
+        SaveFame();
+        Load(NextMapName);
+    }
+}

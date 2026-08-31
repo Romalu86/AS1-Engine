@@ -1,0 +1,11 @@
+GREEN IMPLANT
+adjust accuracy
+
+DESCRIPTION:  
+it increases the 
+accuracy of your weapon
+for moving and standing 
+objects. also it increases 
+the power of your 
+weapon because of 
+bioenergetic impulses.

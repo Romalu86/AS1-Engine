@@ -1,0 +1,17 @@
+WEAPON 04: 
+minigun
+
+PARAMETERS:
+damage: 6 
+radius: 5 
+reload: 10 
+speed : INSTANTLY 
+
+DESCRIPTION:
+every soldier`s best friend, 
+due to its high rate of fire, 
+the minigun throws out a stream 
+of depleted uranium death that 
+can cut through a group of enemy 
+units like a hot knife 
+through butter.

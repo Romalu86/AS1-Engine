@@ -1,0 +1,11 @@
+GREEN ARMOR
+
+PARAMETERS:
+capacity: 100
+hit damage: 50/50
+
+DESCRIPTION:  
+standard soldiers' armor,
+reduces damage by 50% and 
+provides good defense at
+the beginning levels.

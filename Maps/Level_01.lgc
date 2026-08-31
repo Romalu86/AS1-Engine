@@ -1,0 +1,28 @@
+#define MUSIC0 "music\\mus01.ogg"
+#define MUSIC1 "music\\mus02.ogg"
+
+#include "maps\export.lgc"
+#include "maps\common.lgc"
+#include "maps\common_compaign.lgc"
+
+
+
+main()
+{
+  iff(1)
+  {
+    InitGame();
+    PlayMusicFile("music\\wind.ogg",1);
+    DoorsIsOpen = 0;
+  }
+  if( GameTact() )
+    return;
+//  CompaignGameTact();
+  iff( SizeTo(Flagman(0),1550,1295) < 70 )
+  {
+    Win();
+    while( MenuFind(3,999999) )
+      Destroy( MenuFind(3,999999) );
+    LoadNextMap( "maps\\shop.map" );
+  }
+}

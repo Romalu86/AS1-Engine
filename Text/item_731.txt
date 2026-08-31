@@ -1,0 +1,7 @@
+EQUIPMENT:
+drone
+
+DESCRIPTION:  
+an automated defense system 
+that will target, fire upon, 
+and destroy any moving object.

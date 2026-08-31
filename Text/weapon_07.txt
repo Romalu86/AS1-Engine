@@ -1,0 +1,18 @@
+WEAPON 07: 
+plasma rifle
+
+PARAMETERS:
+damage: 180
+radius: 160
+reload: 350
+speed : INSTANTLY
+
+DESCRIPTION:
+a plasma based weapon 
+whose beam is capable of 
+killing virtually any 
+living thing it touches.  
+It is quite simply the 
+most powerful single shot 
+weapon we have yet 
+been able to devise.

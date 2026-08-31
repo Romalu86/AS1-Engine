@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 08: 
+flame
+
+PARAMETERS:
+damage: 150
+radius: 100
+reload: 10  
+speed : SLOW

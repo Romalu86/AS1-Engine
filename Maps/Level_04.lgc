@@ -1,0 +1,36 @@
+#define MUSIC0 "music\\mus01.ogg"
+#define MUSIC1 "music\\mus02.ogg"
+
+#include "maps\export.lgc"
+#include "maps\common.lgc"
+#include "maps\common_compaign.lgc"
+
+
+
+main()
+{
+  int i;
+  iff(1)
+    InitGame();
+  if( GameTact() )
+    return;
+  CompaignGameTact();
+  iff( SizeTo(Flagman(0),2004,2573) < 80 )
+  {//триггер для выключения света и закрытия дверей
+    //смена точки перерождения для игрока
+    StartPlayerX=GetX(Flagman(0)); StartPlayerY=GetY(Flagman(0)); StartPlayerZ=GetZ(Flagman(0));
+    DoorsIsOpen = 0;
+    PlaySFX(44);
+    EarthQuake(3000);
+    //SetGamma(0x545454);
+    LightOff(0x606060);
+    for( i=FirstSprite(); i; i=NextSprite() )
+    {
+      if( GetUnitVid(i)==423 )
+      {//замены кнопок у дверей
+        CreateSprite(424,GetX(i),GetY(i),GetZ(i),GetDirection(i));
+        Destroy(i);
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+#define MUSIC0 "music\\mus02.ogg"
+#define MUSIC1 "music\\mus01.ogg"
+
+#include "maps\export.lgc"
+#include "maps\common.lgc"
+#include "maps\common_compaign.lgc"
+
+
+
+main()
+{
+  iff(1)
+  {
+    InitGame();
+    DoorsIsOpen = 1;
+  }
+  if( GameTact() )
+    return;
+  CompaignGameTact();
+  // смена точек перерождения
+  iff( SizeTo(Flagman(0),3592,2232) < 100 )
+  {
+    StartPlayerX = 3592;//3550
+    StartPlayerY = 2232;//2266
+    StartPlayerZ = 0;
+  }
+}

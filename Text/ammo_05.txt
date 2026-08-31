@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 05: 
+rocket
+
+PARAMETERS:
+damage: 100
+radius: 120
+reload: 250
+speed : FAST

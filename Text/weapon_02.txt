@@ -1,0 +1,16 @@
+WEAPON 02: 
+shotgun
+
+PARAMETERS:
+damage: 20
+radius: 30
+reload: 160
+speed : INSTANTLY   
+
+DESCRIPTION:
+the shotgun is ideal for fighting
+in close quarters with large 
+groups of monsters.  
+its scattering effect and large 
+kill zone allow you to destroy 
+several targets at once.   

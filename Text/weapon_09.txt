@@ -1,0 +1,19 @@
+WEAPON 09: 
+magma minigun
+
+PARAMETERS:
+damage: 100 
+radius: 30 
+reload: 10 
+speed : FASTEST   
+
+DESCRIPTION:
+this is it soldier, the magma 
+minigun represents the pinnacle 
+of modern military small arms 
+technology. maximum destructive 
+power mated with an unrivaled 
+rate of fire makes the magma 
+minigun the single most powerful 
+weapons system available to the 
+individual soldier. 

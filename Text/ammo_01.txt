@@ -1,0 +1,9 @@
+AMMO FOR WEAPON 01: 
+pistols bullets
+
+PARAMETERS:
+damage: 3
+radius: 1
+reload: 100
+speed : INSTANTLY
+

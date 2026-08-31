@@ -1,0 +1,86 @@
+#include "maps\export.lgc"
+//#include "maps\common.lgc"
+
+int StartPublisherLogoTime = 0,
+    StartLogoTime = 0,
+    StartLogoTeamTime = 0,//время начала проигрывания logo
+    StartNextFile = 0;
+
+main()
+{
+  iff( 1 )
+  {
+    SetReg( GetDefaultRegPath(),"NewRecord",999 );
+    SetCursor(CURSOR_OFF);
+    SetSoundVolume( GetReg(GetDefaultRegPath(),"SoundVolume","100") );
+    SetMusicVolume( GetReg(GetDefaultRegPath(),"MusicVolume","100") );
+    StartPublisherLogoTime = GetTime();
+    Effect(EFF_FADE,0);
+  }
+  if( StartPublisherLogoTime )
+  {
+    if( GetEffectState(EFF_FADE) > 45 || GetEffectState(EFF_FADE) < 0 )
+    {
+      iff( 1 )
+      {
+        if( !CreateSprite(702,ScreenX()/2,ScreenY()/2,0) )
+        {
+          StartLogoTime = GetTime();
+          StartPublisherLogoTime = 0;
+        }
+      }
+      if( GetKey() || (GetInputState()&(INPUT_LCLICK|INPUT_RCLICK)) || (GetTime() - StartPublisherLogoTime) > 5000 )
+      {
+        StartLogoTime = GetTime();
+        StartPublisherLogoTime = 0;
+        Effect(EFF_FADE,0);
+      }
+    }
+    return;
+  }
+  if( StartLogoTime )
+  {
+    if( GetEffectState(EFF_FADE) > 45 || GetEffectState(EFF_FADE) < 0 )
+    {
+      iff( 1 )
+      {
+        MenuRelease();
+        CreateSprite(700,ScreenX()/2,ScreenY()/2,0);
+        PlayMusicFile("music\\menu_mus.ogg");
+      }
+      if( GetKey() || (GetInputState()&(INPUT_LCLICK|INPUT_RCLICK)) || (GetTime() - StartLogoTime) > 5000 )
+      {
+        StartLogoTeamTime = GetTime();
+        StartLogoTime = 0;
+        Effect(EFF_FADE,0);
+      }
+    }
+    return;
+  }
+  if( StartLogoTeamTime )
+  {
+    if( GetEffectState(EFF_FADE) > 45 || GetEffectState(EFF_FADE) < 0 )
+    {
+      iff( 1 )
+      {
+        MenuRelease();
+        CreateSprite(701,ScreenX()/2,ScreenY()/2,0);
+//        PlayMusicFile("music\\logo_mus.ogg");
+      }
+      iff( GetKey() || (GetInputState()&(INPUT_LCLICK|INPUT_RCLICK)) || (GetTime() - StartLogoTeamTime) > 8000 )
+      {
+        StartLogoTeamTime = 0;
+        StartNextFile = GetTime();
+        Effect(EFF_FADE,0);
+      }
+    }
+    return;
+  }
+  if( StartNextFile )
+  {
+    iff( GetEffectState(EFF_FADE) > 45 )
+    {
+      Load("maps\\mainmenu.map");
+    }
+  }
+}

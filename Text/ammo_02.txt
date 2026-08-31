@@ -1,0 +1,9 @@
+AMMO FOR WEAPON 02: 
+shotgun shells
+
+PARAMETERS:
+damage: 20
+radius: 30
+reload: 160
+speed : INSTANTLY
+

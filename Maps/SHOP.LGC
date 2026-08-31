@@ -1,0 +1,445 @@
+#include "maps\export.lgc"
+//#include "maps\common_menu.lgc"
+//#include "maps\common_table.lgc"
+#include "maps\common.lgc"
+
+//for MenuState
+#define MENU_SHOP    0
+#define MENU_OPTIONS 1
+#define MENU_MAIN    5
+#define MENU_PLAY    6
+
+static int MenuState = 0;//тип меню 0-Play,1-Options,2-FameHall,3-Credits,4-Quit,5-BaseMenu
+static int StartEffectTime = 0;//время начала видео эффекта
+static int StartLogoTime = 0,StartLogoTeamTime = 0;//время начала проигрывания logo
+static int DescribeText;
+static int DescribeText2;
+static int MenuBarAmmo[11];//полоска с количеством патронов на оружии
+//static int PlayerScores;
+//static int PlayerMoney;
+static int PlayerAmmo[11];
+static int PlayerWeapon[11];
+static int PrevMaxAmmo[11];
+//static int PlayerItem[12];//количество вещей [nVid-720] у игрока
+static string PlayerName;
+
+
+ChangeMenuState(int new_menu_type)
+{
+  MenuState = new_menu_type;
+  Effect(EFF_FADE,0);
+  StartEffectTime = GetTime();
+}
+
+SetShop()
+{
+  int i;
+  string text;
+  text = "";
+  Action(DescribeText2,ACT_SET_TEXT,&text);
+  if( MenuNVidUnderCursor()==709 )//оружие
+  {
+    if( !PlayerWeapon[MenuNDirUnderCursor()] && PlayerMoney < WeaponPrice[MenuNDirUnderCursor()] )
+    {
+      text = "text\\enough.txt";
+      Action(DescribeText2,ACT_SET_FILE,&text);
+    }
+    text = Printf("text\\weapon_%02i.txt",MenuNDirUnderCursor());
+    Action(DescribeText,ACT_SET_FILE,&text);
+  }
+  else if( MenuNVidUnderCursor()==712 )//вещи
+  {
+    if( PlayerMoney < ItemPrice[MenuNDirUnderCursor()+4] )
+    int additional_money;
+    additional_money = 0;
+    if( MenuNDirUnderCursor() < 3 )// бронежилет
+      for( i = 4; i < 7; i++ )
+        additional_money += ItemPrice[i]*PlayerItem[i];
+    if( PlayerMoney+additional_money < ItemPrice[MenuNDirUnderCursor()+4] &&
+       (!PlayerItem[MenuNDirUnderCursor()+4] || (MenuNDirUnderCursor()==3 && PlayerItem[MenuNDirUnderCursor()+4]<5)) )
+    {
+      text = "text\\enough.txt";
+      Action(DescribeText2,ACT_SET_FILE,&text);
+    }
+    text = Printf("text\\item_%3i.txt",724+MenuNDirUnderCursor());
+    Action(DescribeText,ACT_SET_FILE,&text);
+  }
+  else if( MenuNVidUnderCursor()==749 )//имплантанты
+  {
+    if( PlayerItem[MenuNDirUnderCursor()] < 3 && PlayerMoney < ItemPrice[MenuNDirUnderCursor()] )
+    {
+      text = "text\\enough.txt";
+      Action(DescribeText2,ACT_SET_FILE,&text);
+    }
+    text = Printf("text\\item_%3i.txt",720+MenuNDirUnderCursor());
+    Action(DescribeText,ACT_SET_FILE,&text);
+  }
+  else if( MenuNVidUnderCursor()==713 )//патроны
+  {
+    if( PlayerAmmo[MenuNDirUnderCursor()] < GetVidData(10+MenuNDirUnderCursor(),VID_AMMO)
+      && PlayerMoney < AmmoPrice[MenuNDirUnderCursor()] )
+    {
+      text = "text\\enough.txt";
+      Action(DescribeText2,ACT_SET_FILE,&text);
+    }
+    text = Printf("text\\ammo_%02i.txt",MenuNDirUnderCursor());
+    Action(DescribeText,ACT_SET_FILE,&text);
+  }
+  else
+  {
+    i = GetReg(GetDefaultRegPath(),"LevelNumber",1);
+    text = Printf("text\\level_%02i.txt",i);
+    Action(DescribeText,ACT_SET_FILE,&text);
+  }
+//  SetVidData(4,VID_FRAME_SPEED,5);
+//  Action(DescribeText,ACT_SET_TEXT_COUNT,0);
+}
+
+
+main()
+{
+  int menu,i,j;
+  static int prev_vid=0,prev_dir=0;
+  iff( 1 )
+  {
+    SetCursor(CURSOR_NORMAL);
+    PlayerMoney  = GetReg(GetDefaultRegPath(),"PlayerMoney",0);
+    PlayerScores = GetReg(GetDefaultRegPath(),"PlayerScores",0);
+    PlayerName   = GetReg(GetDefaultRegPath(),"PlayerName",GetString("menu","DefaultName"));
+    for( i = 0; i < 10; i++ )
+    {
+      PlayerAmmo[i] = GetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(i),0);
+      PlayerWeapon[i] = GetReg(GetDefaultRegPath(),"PlayerWeapon"+itoa(i),0);
+      SetVidData(731+i,VID_GAMMA+1,0x7f7f7f);
+    }
+    for( i = 0; i < 12; i++ )
+    {
+      PlayerItem[i] = GetReg(GetDefaultRegPath(),"PlayerItem"+itoa(i),0);
+      SetVidData(720+i,VID_GAMMA+1,0x7f7f7f);
+    }
+    // запоминаем последнее максимальное количество патронов
+    for( i = 12; i < 20; i++ )
+      PrevMaxAmmo[i-12] = GetVidData( i,VID_AMMO );
+    SetVidData(748,VID_GAMMA+1,0x7f7f7f);//гамма для динамита
+//    Effect(EFF_FADE_OUT,0);
+    StartEffectTime = GetTime()-1001;
+    MenuState=MENU_SHOP;
+  }
+
+  if( MenuState==MENU_SHOP )
+  {
+    if( StartEffectTime )
+      if( GetEffectState(EFF_FADE) > 45 || GetEffectState(EFF_FADE_OUT) >= 0 )
+      {
+        StartEffectTime = 0;
+        MenuRelease();
+        MenuLoad("maps\\shop.men");
+        if( GetReg(GetDefaultRegPath(),"PlayerSex","male")=="female" )
+          MenuAction(718,0,ACT_CHANGE_DIRECTION,160);
+        DescribeText  = CreateText(4,ScreenX()/2-297,ScreenY()/2-44,2,"text");  //координаты вывода текста на монитор
+        DescribeText2 = CreateText(3,ScreenX()/2-297,ScreenY()/2+160,2,"");  //координаты вывода нижней строки текста на монитор
+        for( i = 0; i < 10; i++ )
+          MenuBarAmmo[i]   = MenuFind(745,i);
+        for( i = 0; i < 10; i++ )
+        { // оружие
+          if( PlayerWeapon[i] )
+            MenuAction(709,i,ANI_MENUSTANDUP);
+          // патроны
+          if( PlayerAmmo[i] >= GetVidData(10+i,VID_AMMO) )
+            MenuAction(713,i,ANI_MENUSTANDUP);
+          if( !PlayerAmmo[i] )
+            MenuAction(731+i,999999,ACT_SET_ARMY,1);
+          Action( MenuBarAmmo[i], ACT_CHANGE_DIRECTION, (PlayerAmmo[i]*248)/GetVidData(10+i,VID_AMMO) );
+        }
+        for( i = 0; i < 4; i++ )
+        { //имплантанты
+          for( j = 0; j < 3; j++ )
+            if( j < PlayerItem[i] )
+              MenuAction(720+i,j,ACT_SET_ARMY,0);
+            else
+              MenuAction(720+i,j,ACT_SET_ARMY,1);
+        }
+        for( i = 4; i < 12; i++ )
+        {
+          if( PlayerItem[i] )
+            if( i==7 )// PlayerLife
+              if( PlayerItem[i]>=5 )
+                MenuAction(712,i-4,ANI_MENUSTANDUP);
+              else ;
+            else if( i > 3 )
+              MenuAction(712,i-4,ANI_MENUSTANDUP);
+            else ;
+          else
+            MenuAction(720+i,999999,ACT_SET_ARMY,1);
+        }
+        SetShop();
+      }
+
+    // Если курсор переместился с одной кнопки на другую
+    if( MenuNVidUnderCursor()!=prev_vid || MenuNDirUnderCursor()!=prev_dir || MenuLClick() || MenuRClick() )
+    {
+      if( prev_vid==712 )
+        if( !PlayerItem[prev_dir+4] )
+          MenuAction(720+prev_dir+4,999999,ACT_SET_ARMY,1);
+      if( prev_vid==713 )
+        if( !PlayerAmmo[prev_dir] )
+          MenuAction(731+prev_dir,999999,ACT_SET_ARMY,1);
+      prev_vid = MenuNVidUnderCursor();
+      prev_dir = MenuNDirUnderCursor();
+      SetShop();
+      if( prev_vid==712 )
+        MenuAction(720+prev_dir+4,999999,ACT_SET_ARMY,0);
+      if( prev_vid==713 )
+        MenuAction(731+prev_dir,999999,ACT_SET_ARMY,0);
+    }
+    MenuAction(727,999999,ACT_CHANGE_DIRECTION,(PlayerItem[7]*255)/6);
+
+    if( MenuLClick() )
+    {
+      if( MenuNVidUnderCursor()==705 )
+      {
+        if( MenuNDirUnderCursor()==0 )
+          ChangeMenuState(MENU_MAIN);
+        else if( MenuNDirUnderCursor()==1 )
+          ChangeMenuState(MENU_OPTIONS);
+        else if( MenuNDirUnderCursor()==2 )
+          ChangeMenuState(MENU_PLAY);
+      }
+      else if( MenuNVidUnderCursor()==709 )//покупка оружия
+      {
+        if( PlayerMoney >= WeaponPrice[MenuNDirUnderCursor()] && !PlayerWeapon[MenuNDirUnderCursor()] )
+        {
+          PlayerMoney -= WeaponPrice[MenuNDirUnderCursor()];
+          MenuAction(709,MenuNDirUnderCursor(),ANI_MENUSTANDUP);
+          PlayerWeapon[MenuNDirUnderCursor()] = 1;
+          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      else if( MenuNVidUnderCursor()==713 )//покупка патронов
+      {
+        if( PlayerMoney >= AmmoPrice[MenuNDirUnderCursor()] &&
+          PlayerAmmo[MenuNDirUnderCursor()] < GetVidData(10+MenuNDirUnderCursor(),VID_AMMO) )
+        {
+          PlayerMoney -= AmmoPrice[MenuNDirUnderCursor()];
+          PlayerAmmo[MenuNDirUnderCursor()] += GettingAmmo[MenuNDirUnderCursor()];
+          if( PlayerAmmo[MenuNDirUnderCursor()] >= GetVidData(10+MenuNDirUnderCursor(),VID_AMMO) )
+          {
+            MenuAction(713,MenuNDirUnderCursor(),ANI_MENUSTANDUP);
+            PlayerAmmo[MenuNDirUnderCursor()] = GetVidData(10+MenuNDirUnderCursor(),VID_AMMO);
+          }
+          MenuAction(731+MenuNDirUnderCursor(),999999,ACT_SET_ARMY,0);
+          Action( MenuBarAmmo[MenuNDirUnderCursor()], ACT_CHANGE_DIRECTION,
+            (PlayerAmmo[MenuNDirUnderCursor()]*248)/GetVidData(10+MenuNDirUnderCursor(),VID_AMMO) );
+          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      else if( MenuNVidUnderCursor()==712 )//покупка прочих вещей
+      {
+        int additional_money;
+        additional_money = 0;
+        if( MenuNDirUnderCursor() < 3 )// бронежилет
+          for( i = 4; i < 7; i++ )
+            additional_money += ItemPrice[i]*PlayerItem[i];
+        if( PlayerMoney+additional_money >= ItemPrice[MenuNDirUnderCursor()+4] &&
+           (!PlayerItem[MenuNDirUnderCursor()+4] || (MenuNDirUnderCursor()==3 && PlayerItem[MenuNDirUnderCursor()+4]<5)) )
+        {
+          if( MenuNDirUnderCursor() < 3 )// бронежилет
+            for( i = 4; i < 7; i++ )
+              if( PlayerItem[i] )
+              {
+                PlayerItem[i] = 0;
+                MenuAction(712,i-4,ANI_MENUSTANDDOWN);
+                MenuAction(724+i-4,999999,ACT_SET_ARMY,1);
+              }
+          PlayerMoney -= ItemPrice[MenuNDirUnderCursor()+4]-additional_money;
+          MenuAction(724+MenuNDirUnderCursor(),999999,ACT_SET_ARMY,0);
+          ++PlayerItem[MenuNDirUnderCursor()+4];
+          if( MenuNDirUnderCursor()!=3 || PlayerItem[MenuNDirUnderCursor()+4]>=5 )
+            MenuAction(712,MenuNDirUnderCursor(),ANI_MENUSTANDUP);
+          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      else if( MenuNVidUnderCursor()==749 )//покупка имплантантов
+      {
+        if( PlayerMoney >= ItemPrice[MenuNDirUnderCursor()] && PlayerItem[MenuNDirUnderCursor()] < 3 )
+        {
+          PlayerMoney -= ItemPrice[MenuNDirUnderCursor()];
+          MenuAction(720+MenuNDirUnderCursor(),PlayerItem[MenuNDirUnderCursor()],ACT_SET_ARMY,0);
+          ++PlayerItem[MenuNDirUnderCursor()];
+          PlaySFX(45);
+          if( MenuNDirUnderCursor()==1 )
+          { // покупка имплантанта силы (количества патронов)
+            PlayerItem[1]--;
+            F243_0(0);
+            for( i = 2; i < 10; i++ )
+            {
+              if( PlayerAmmo[i] < GetVidData(10+i,VID_AMMO) )
+                MenuAction(713,i,ANI_MENUSTANDDOWN);
+              Action( MenuBarAmmo[i], ACT_CHANGE_DIRECTION, (PlayerAmmo[i]*248)/GetVidData(10+i,VID_AMMO) );
+            }
+          }
+        }
+        else
+          PlaySFX(46);
+      }
+    }
+    if( MenuRClick() )//продажа вещей
+    {
+      if( MenuNVidUnderCursor()==709 )//продажа оружия
+      {
+        if( PlayerWeapon[MenuNDirUnderCursor()] > GetReg(GetDefaultRegPath(),"PlayerWeapon"+itoa(MenuNDirUnderCursor()),0) )
+        {
+          PlayerMoney += WeaponPrice[MenuNDirUnderCursor()];
+          MenuAction(709,MenuNDirUnderCursor(),ANI_MENUSTANDDOWN);
+          PlayerWeapon[MenuNDirUnderCursor()] = 0;
+//          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      if( MenuNVidUnderCursor()==713 )//продажа патронов
+      {
+        if( PlayerAmmo[MenuNDirUnderCursor()] > GetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(MenuNDirUnderCursor()),0) )
+        {
+          PlayerMoney += AmmoPrice[MenuNDirUnderCursor()];
+          PlayerAmmo[MenuNDirUnderCursor()] -= GettingAmmo[MenuNDirUnderCursor()];
+          if( PlayerAmmo[MenuNDirUnderCursor()] < GetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(MenuNDirUnderCursor()),0) )
+            PlayerAmmo[MenuNDirUnderCursor()] = GetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(MenuNDirUnderCursor()),0);
+          if( !PlayerAmmo[MenuNDirUnderCursor()] )
+            MenuAction(731+MenuNDirUnderCursor(),999999,ACT_SET_ARMY,1);
+          MenuAction(713,MenuNDirUnderCursor(),ANI_MENUSTANDDOWN);
+          Action( MenuBarAmmo[MenuNDirUnderCursor()], ACT_CHANGE_DIRECTION,
+            (PlayerAmmo[MenuNDirUnderCursor()]*248)/GetVidData(10+MenuNDirUnderCursor(),VID_AMMO) );
+//          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      else if( MenuNVidUnderCursor()==712 )//продажа прочих вещей
+      {
+        if( PlayerItem[MenuNDirUnderCursor()+4] > GetReg(GetDefaultRegPath(),"PlayerItem"+itoa(MenuNDirUnderCursor()+4),0) )
+        {
+          PlayerMoney += ItemPrice[MenuNDirUnderCursor()+4];
+          MenuAction(712,MenuNDirUnderCursor(),ANI_MENUSTANDDOWN);
+          if( --PlayerItem[MenuNDirUnderCursor()+4]==0 )
+            MenuAction(724+MenuNDirUnderCursor(),999999,ACT_SET_ARMY,1);
+//          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+      else if( MenuNVidUnderCursor()==749 )//продажа имплантантов
+      {
+        if( PlayerItem[MenuNDirUnderCursor()] > GetReg(GetDefaultRegPath(),"PlayerItem"+itoa(MenuNDirUnderCursor()),0) )
+        {
+          PlayerMoney += ItemPrice[MenuNDirUnderCursor()];
+          --PlayerItem[MenuNDirUnderCursor()];
+          MenuAction(720+MenuNDirUnderCursor(),PlayerItem[MenuNDirUnderCursor()],ACT_SET_ARMY,1);
+          if( MenuNDirUnderCursor()==1 )
+          { // продажа имплантанта силы (количества патронов)
+            for( i = 12; i < 20; i++ )
+              SetVidData( i,VID_AMMO,PrevMaxAmmo[i-12] );
+            j = PlayerItem[1];
+            PlayerItem[1] = GetReg(GetDefaultRegPath(),"PlayerItem1",0);
+            for( i = PlayerItem[1]; i < j; i++ )
+              F243_0(0);
+            for( i = 2; i < 10; i++ )
+            {
+              if( PlayerAmmo[i] >= GetVidData(10+i,VID_AMMO) )
+              {
+                MenuAction(713,i,ANI_MENUSTANDUP);
+                PlayerAmmo[i] = GetVidData(10+i,VID_AMMO);
+              }
+              Action( MenuBarAmmo[i], ACT_CHANGE_DIRECTION, (PlayerAmmo[i]*248)/GetVidData(10+i,VID_AMMO) );
+            }
+          }
+//          PlaySFX(45);
+        }
+        else
+          PlaySFX(46);
+      }
+    }
+    if( GetKey()==VK_ESCAPE )
+       ChangeMenuState(MENU_MAIN);
+    if( GetKey()==' ' || GetKey()==VK_RETURN )
+       ChangeMenuState(MENU_PLAY);
+  }
+  else if( MenuState==MENU_OPTIONS )
+  {
+    if( StartEffectTime )
+      if( (GetTime()-StartEffectTime) > 1000 )
+      {
+        StartEffectTime = 0;
+        CreateOptionsMenu("maps\\options.men");
+//        menu = MenuFind(705,0);
+//        CreateText(3,ToScreenX(GetX(menu))-32,ToScreenY(GetY(menu)+1)-10,GetZ(menu)+1,GetString("menu","Back"));
+      }
+    TactOptionsMenu();
+    if( GetKey()==27 || (MenuLClick() && MenuNVidUnderCursor()==705) )
+       ChangeMenuState(MENU_SHOP);
+  }
+  else if( MenuState==MENU_PLAY )
+  {
+    if( (GetTime()-StartEffectTime) > 1000 )
+    { // загрузка игровой карты
+      SetReg(GetDefaultRegPath(),"PlayerMoney",PlayerMoney);
+      for( i = 0; i < 10; i++ )
+      {
+        SetReg(GetDefaultRegPath(),"PlayerAmmo"+itoa(i),PlayerAmmo[i]);
+        SetReg(GetDefaultRegPath(),"PlayerWeapon"+itoa(i),PlayerWeapon[i]);
+      }
+      for( i = 0; i < 12; i++ )
+        SetReg(GetDefaultRegPath(),"PlayerItem"+itoa(i),PlayerItem[i]);
+      StartEffectTime = 0;
+      StopMusic();
+      //устанавливаем игроку пистолеты для начала уровня
+      SetVidData(9,VID_LINK,11);
+
+      i = GetReg(GetDefaultRegPath(),"LevelNumber",1);
+      Load( Printf("maps\\level_%02i.map",i) );
+    }
+  }
+  else if( MenuState==MENU_MAIN )
+  {
+    if( (GetTime()-StartEffectTime) > 1000 )
+    {
+      StartEffectTime = 0;
+      Load("maps\\mainmenu.map");
+    }
+  }
+
+  if( GetKey() )
+  {
+    static int old_key=0,new_key;
+    if( GetKey()>='a' &&  GetKey()<='z' )
+      new_key = GetKey() - ('a'-'A');
+    else
+      new_key = GetKey();
+    if( old_key==0 && new_key=='C' )
+      old_key = new_key;
+    else if( old_key=='C' && new_key=='H' )
+      old_key = new_key;
+    else if( old_key=='H' && new_key=='E' )
+      old_key = new_key;
+    else if( old_key=='E' && new_key=='A' )
+      old_key = new_key;
+    else if( old_key=='A' && new_key=='T' )
+      old_key = new_key;
+    else if( old_key=='T' )
+    {
+      if( new_key=='M' )//add 50000$
+      {
+        PlayerMoney=50000;
+        SetShop();
+      }
+      old_key = 0;
+    }
+    else old_key = 0;
+  }
+}

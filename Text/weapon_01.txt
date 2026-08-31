@@ -1,0 +1,19 @@
+WEAPON 01: 
+two pistols
+
+PARAMETERS:
+damage: 3
+radius: 1
+reload: 100
+speed : INSTANTLY      
+
+DESCRIPTION:
+9mm guns - these are just the 
+things for fighting the smaller 
+enemy monsters and for taking 
+out certain key enemy materials, 
+such as ammo boxes. with these 
+guns you`ll never feel unarmed,
+because they never run out of 
+ammunition. why? because you`re 
+a hero, that`s why.

@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 07: 
+plasma ammo box
+
+PARAMETERS:
+damage: 180
+radius: 160
+reload: 350
+speed : INSTANTLY

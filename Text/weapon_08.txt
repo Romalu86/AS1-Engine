@@ -1,0 +1,17 @@
+WEAPON 08: 
+flame thrower
+
+PARAMETERS:
+damage: 150
+radius: 100
+reload: 10  
+speed : SLOW 
+
+DESCRIPTION:
+the flamethrower may be an 
+ancient weapon, but it is 
+still very effective against 
+monsters.  
+no living substances can 
+survive prolonged exposure 
+to its flame stream.

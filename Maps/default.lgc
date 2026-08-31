@@ -1,0 +1,82 @@
+//#include "maps\header.lgc"
+extern SetVidData(int nvid,int type,int var)         163;//изменить параметр внутри вида,см.VID_XXX, см. NVID_XXX
+#define VID_GAMMA        18 //18-21
+SetArmyGamma()
+{
+//  int army_gamma[4]={0,0x005f3f,0x0000ff,0xB4DCBC},i;
+//гамма юнитов (наши\ненаши\нейтралы\пираты)
+//20020520past int army_gamma[4]={0,0x005f3f,0x0000ff,0x688897},i;
+  int army_gamma[4]={0,0xe83917,0xF58A8A,0x2e451f},i=0;
+
+//гамма флагов (наши\ненаши\нейтралы\пираты)  
+//20020520past int flag_gamma[4]={0xff00ff,0x005f3f,0x0000ff,0xB4DCBC};
+  int flag_gamma[4]={0x7e007e,0x007e7e,0x00007e,0x686868};
+
+//гамма менюшки (нормальная\очередь строящихся в депо\неактивная\выбор при строительстве в депо)
+  int menu_gamma[4]={0x1FF351,0xF4FA4E,0x000000,0xD40539};
+//20020607past  int menu_gamma[4]={0,0,0,0};
+
+//гамма точек пути паровоза (движение\атака\линковка\таран)
+  int dots_gamma[4]={0x00aa00,0xaa0000,0xaaaa00,0x303030};
+
+  for(i=0;i<4;i++)
+  {
+/*    SetVidData(455,VID_GAMMA+i,menu_gamma[i]);
+    SetVidData( 5,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(10,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(15,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(20,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(21,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(25,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(26,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(30,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(31,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(35,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(40,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(41,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(42,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(43,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(45,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(50,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(55,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(56,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(70,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(71,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(72,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(73,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(75,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(76,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(77,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(78,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(80,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(81,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(82,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(83,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(85,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(90,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(91,VID_GAMMA+i,army_gamma[i]);
+    if(i==3)SetVidData(95,VID_GAMMA+i,army_gamma[2]);
+    else SetVidData(95,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(97,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(110,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(112,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(115,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(116,VID_GAMMA+i,army_gamma[i]);
+    SetVidData(117,VID_GAMMA+i,army_gamma[i]);
+//    SetVidData(175,VID_GAMMA+i,army_gamma[i]);
+    //Флаги (Виталий, я их починил:)) то есть разобрался)
+    SetVidData(175,VID_GAMMA+i,flag_gamma[i]);
+    SetVidData(770,VID_GAMMA+i,flag_gamma[i]);
+    SetVidData(771,VID_GAMMA+i,flag_gamma[i]);
+    SetVidData(772,VID_GAMMA+i,flag_gamma[i]);
+    SetVidData(773,VID_GAMMA+i,flag_gamma[i]);
+    SetVidData(774,VID_GAMMA+i,flag_gamma[i]);
+//гамма точек пути паровоза (движение\атака\линковка\таран)
+    SetVidData(603,VID_GAMMA+i,dots_gamma[i]);*/
+  }
+}
+
+main()
+{
+  iff(1) SetArmyGamma();
+}

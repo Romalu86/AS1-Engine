@@ -1,0 +1,11 @@
+EQUIPMENT:
+life
+
+DESCRIPTION:  
+our latest advances have allowed
+our scientists to devise a way to 
+cheat even death.  through the 
+complete replication of an entire 
+human's genetic code this device 
+restores you to life and allows 
+you to continue on your mission.

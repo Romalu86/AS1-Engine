@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 03: 
+grenade
+
+PARAMETERS:
+damage: 40
+radius: 60
+reload: 130
+speed : NORMAL

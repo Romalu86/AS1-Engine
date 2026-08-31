@@ -1,0 +1,18 @@
+MISSION 10:
+the prison.
+
+DESCRIPTION: 
+corporation create new level 
+and send to them new monsters. 
+for the blocking levels has a
+relieable security systems. 
+destroy all monsters 
+in the prison.
+
+TIPS:   
+barriers with monsters are 
+defended by powerful energyc 
+fields, to destroy the monsters 
+you must first destroy the 
+generators.
+

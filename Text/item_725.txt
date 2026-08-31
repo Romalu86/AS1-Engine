@@ -1,0 +1,12 @@
+YELLOW ARMOR
+
+PARAMETERS:
+capacity: 200
+hit damage: 30/70
+
+DESCRIPTION:  
+improved armor, due to the 
+introduction of extraterrestrial
+metals, this armor provides 
+increased damage protection by 
+reducing damage by 70%.

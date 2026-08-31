@@ -1,0 +1,20 @@
+WEAPON 03: 
+grenade launcher
+
+PARAMETERS:
+damage: 40
+radius: 60
+reload: 130
+speed : NORMAL      
+
+DESCRIPTION:
+the grenade launcher fires high 
+yield fragmentation grenades 
+that can take out as many as 
+10 enemy units simultaneously.  
+a skilled operator can take 
+advantage of grenade launcher`s 
+unique properties by taking out 
+enemies from around corners.  
+remember soldier, once a grenade 
+is thrown, it`s nobody`s friend. 

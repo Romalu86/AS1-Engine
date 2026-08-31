@@ -1,0 +1,6 @@
+EQUIPMENT:
+night vision
+
+DESCRIPTION:  
+allow you to see through darkness 
+using infrared sensors.

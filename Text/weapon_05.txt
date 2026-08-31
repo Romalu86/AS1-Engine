@@ -1,0 +1,17 @@
+WEAPON 05: 
+rocket launcher
+
+PARAMETERS:
+damage: 100
+radius: 120
+reload: 250
+speed : FAST  
+
+DESCRIPTION:
+firing high explosive 
+fire-and-forget missiles, 
+the rocket launcher is an 
+excellent choice for 
+eliminating hard targets 
+or particularly tough 
+soft targets.

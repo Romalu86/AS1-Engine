@@ -1,0 +1,20 @@
+MISSION 06: 
+new treat.
+
+DESCRIPTION: 
+you must clear the 
+military storehouses 
+of monsters
+
+TIPS:    
+military storehouses contain 
+samples of advanced weaponry, 
+creatures on this level 
+appear to be more... 
+evolved...  
+they can wield weapons... 
+be careful!!!
+
+
+
+

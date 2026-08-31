@@ -1,0 +1,8 @@
+AMMO FOR WEAPON 06: 
+freeze ammo
+
+PARAMETERS:
+damage: FREEZE 40 
+radius: 80 
+reload: 100 
+speed : FAST

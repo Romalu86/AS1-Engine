@@ -1,0 +1,160 @@
+#define SHIFT_WEAPON 67 //сдвиг оружия в данный момент выбранного
+
+static int StateBar=0;//состояние информационной игровой панели
+static int StateBarLife=0;
+static int StateBarHp=0;
+static int StateBarArmorHp=0;
+static int StateBarArmorPict=0;
+static int StateBarAmmoText=0;
+static int StateBarScores=0;
+static int StateBarAmmo[11];
+static int StateBarWeapon[11];
+static int StateBarCurrentWeapon;//номер оружия отображаемого как выбранное
+static int StateBarExplosive=0;//цифра с количеством динамита
+
+SetStateBarArmor()
+{
+  string text;
+  int    link,menu;
+  for( link = Action(Flagman(0),ACT_GET_LINK); link; link = Action(link,ACT_GET_LINK) )
+    if( GetUnitVid(link) >= 200 && GetUnitVid(link) <= 202 )
+    {
+      if( (GetUnitVid(link) - 200) != (GetUnitVid(StateBarArmorPict) - 724) )
+      {
+        Destroy(StateBarArmorPict);
+        menu = MenuFind(741,999999);//hp,armor
+        StateBarArmorPict = CreateSprite(724 + GetUnitVid(link) - 200,ToScreenX(GetX(menu))+40,ToScreenY(GetY(menu)+20),GetZ(menu)+1,128);
+        if( !StateBarArmorHp )
+        {
+          StateBarArmorHp = CreateSprite(4,ToScreenX(GetX(menu))+40,ToScreenY(GetY(menu))+19+0x3fff,GetZ(menu)+0x3fff);
+          Action(StateBarArmorHp,ACT_SET_BEHAVE,BEH_CENTER);
+        }
+      }
+      text = Action(link,ACT_GET_HP);
+      Action( StateBarArmorHp,ACT_SET_TEXT,&text);
+      break;
+    }
+  if( !link )
+  {
+    Destroy(StateBarArmorPict);
+    Destroy(StateBarArmorHp);
+  }
+}
+
+CreateStateBar()
+{
+  int i,menu;
+  string text;
+  MenuRelease();
+  if( StateBar )
+  {
+    MenuLoad("maps\\gamebar"+itoa(ScreenX())+".men");
+    if( PlayerItem[8] )                        //фонарик
+      MenuAction(728,999999,ACT_SET_ARMY,0);
+    else
+      MenuAction(728,999999,ACT_SET_ARMY,1);
+    if( PlayerItem[9] )                        //ночное видение
+      MenuAction(729,999999,ACT_SET_ARMY,0);
+    else
+      MenuAction(729,999999,ACT_SET_ARMY,1);
+    if( Action(Flagman(0),ACT_HAVE_ITEM,230) ) //спасательная аптечка
+      MenuAction(730,999999,ACT_SET_ARMY,0);
+    else
+      MenuAction(730,999999,ACT_SET_ARMY,1);
+    if( GetVidData(290,VID_COUNT) )            //дрон
+      MenuAction(731,999999,ACT_SET_ARMY,0);
+    else
+      MenuAction(731,999999,ACT_SET_ARMY,1);
+    if( PlayerExplosive )                      //динамит
+      MenuAction(748,999999,ACT_SET_ARMY,0);
+    else
+      MenuAction(748,999999,ACT_SET_ARMY,1);
+    StateBarLife = MenuFind(727,999999);
+    if( GetReg(GetDefaultRegPath(),"GameTypeSurvive",0)==1 )
+    {
+      Destroy(StateBarLife);
+      StateBarLife = 0;
+    }
+    menu = MenuFind(741,999999);//hp,armor
+    StateBarHp = CreateSprite(3,ToScreenX(GetX(menu))-26,ToScreenY(GetY(menu)),GetZ(menu)+1);
+    Action(StateBarHp,ACT_SET_BEHAVE,BEH_CENTER);
+    menu = MenuFind(748,999999);//динамит
+    StateBarExplosive = CreateSprite(5,ToScreenX(GetX(menu)),ToScreenY(GetY(menu))+12,GetZ(menu)+3);
+    Action(StateBarExplosive,ACT_SET_BEHAVE,BEH_CENTER);
+    if( PlayerExplosive )
+      text = PlayerExplosive;
+    else
+      text = "";
+    Action(StateBarExplosive,ACT_SET_TEXT,&text);
+//    StateBarArmorHp = CreateSprite(3,ToScreenX(GetX(menu))+35,ToScreenY(GetY(menu)),GetZ(menu)+1);
+//    Action(StateBarArmorHp,ACT_SET_BEHAVE,BEH_CENTER);
+    StateBarScores = CreateSprite(3,2,7,0);
+    for( i = 0; i < 10; i++ )
+    {
+      StateBarAmmo[i]   = MenuFind(745,i);
+      StateBarWeapon[i] = MenuFind(710,i);
+    }
+    for( i = 0; i < 10; i++ )
+    {
+      Action(StateBarWeapon[i],ANI_MENUSTANDUP);
+      Action( StateBarAmmo[i], ACT_CHANGE_DIRECTION,
+        (Action(Flagman(0),ACT_GET_AMMO,i)*248)/GetVidData(10+i,VID_AMMO) );
+      if( !Action(Flagman(0),ACT_HAVE_ITEM,260+i) )
+      {
+        Action(StateBarAmmo[i],ACT_SET_INVISIBLE,1);
+        Action(StateBarWeapon[i],ACT_SET_INVISIBLE,1);
+      }
+    }
+    StateBarCurrentWeapon = GetVidData(9,VID_LINK)-10;
+    menu = StateBarAmmo[StateBarCurrentWeapon];
+    StateBarAmmoText = CreateSprite(4,ToScreenX(GetX(menu))+61,ToScreenY(GetY(menu)+3),GetZ(menu)+1);
+    Action( StateBarAmmoText,ACT_SET_BEHAVE,BEH_RIGHT+BEH_CENTER_Y);
+    AddCoorX(StateBarWeapon[StateBarCurrentWeapon],SHIFT_WEAPON);
+    AddCoorX(StateBarAmmo[StateBarCurrentWeapon],SHIFT_WEAPON);
+    SetStateBarArmor();
+  }
+}
+
+DrawStateBar()
+{
+  int i;
+  string text;
+  if( !StateBar )
+    return;
+  if( !Flagman(0) )
+  {
+    text = "0";
+    Action(StateBarHp,ACT_SET_TEXT,&text);
+    Destroy(StateBarArmorPict);
+    Destroy(StateBarArmorHp);
+  }
+  else if( OneTimeInQuarterSecond() )
+  {
+    // обновляем количество жизней
+    Action(StateBarLife,ACT_CHANGE_DIRECTION,(PlayerItem[7]*255)/6);
+    // меняем менюшки для выбранного оружия если оно сменилось
+    if( StateBarCurrentWeapon!=(GetVidData(9,VID_LINK)-10) )
+    {
+      AddCoorX(StateBarWeapon[StateBarCurrentWeapon],-SHIFT_WEAPON);
+      AddCoorX(StateBarAmmo[StateBarCurrentWeapon],-SHIFT_WEAPON);
+      StateBarCurrentWeapon = GetVidData(9,VID_LINK)-10;
+      AddCoorX(StateBarWeapon[StateBarCurrentWeapon],SHIFT_WEAPON);
+      AddCoorX(StateBarAmmo[StateBarCurrentWeapon],SHIFT_WEAPON);
+      Action(StateBarAmmoText,ACT_CHANGE_COOR,GetX(StateBarAmmoText),GetY(StateBarAmmo[StateBarCurrentWeapon])+3,GetZ(StateBarAmmoText));
+//      Action(StateBarAmmo[StateBarCurrentWeapon],ACT_SET_INVISIBLE,0);
+//      Action(StateBarWeapon[StateBarCurrentWeapon],ACT_SET_INVISIBLE,0);
+    }
+    SetStateBarArmor();
+    text = Action(Flagman(0),ACT_GET_HP);
+    Action(StateBarHp,ACT_SET_TEXT,&text);
+    text = Action(Flagman(0),ACT_GET_AMMO,StateBarCurrentWeapon);
+    Action(StateBarAmmoText,ACT_SET_TEXT,&text);
+    text = PlayerScores;
+    Action(StateBarScores,ACT_SET_TEXT,&text);
+    // Устанавливаем индикатор количества патронов для текущего оружия
+    text = Action(Flagman(0),ACT_GET_AMMO,StateBarCurrentWeapon);
+    Action( StateBarAmmoText,ACT_SET_TEXT,&text );
+    Action( StateBarAmmo[StateBarCurrentWeapon], ACT_CHANGE_DIRECTION,
+      (text*248)/GetVidData(GetVidData(9,VID_LINK),VID_AMMO) );
+  }
+}

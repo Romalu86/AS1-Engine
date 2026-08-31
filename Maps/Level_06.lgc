@@ -1,0 +1,20 @@
+#define MUSIC0 "music\\mus01.ogg"
+#define MUSIC1 "music\\mus02.ogg"
+
+#include "maps\export.lgc"
+#include "maps\common.lgc"
+#include "maps\common_compaign.lgc"
+
+
+
+main()
+{
+  iff(1)
+  {
+    InitGame();
+    DoorsIsOpen = 0;
+  }
+  if( GameTact() )
+    return;
+  CompaignGameTact();
+}
