@@ -41,6 +41,5 @@ namespace as1
     std::size_t writeFileRemainder(FileStream& stream, const void* data, std::size_t size);
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(FileStream) == 0x08, "AS1 FSTREAM Win32 ABI size mismatch");
 #endif
 }

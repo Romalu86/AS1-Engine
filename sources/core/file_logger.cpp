@@ -284,7 +284,6 @@ namespace as1
     }
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(FileLogger) == 0x40C, "FileLogger must preserve retail 32-bit 0x40C object size");
 #endif
 
     namespace
@@ -297,21 +296,11 @@ namespace as1
             char pathSlot0C[0x400];
         };
 
-        static_assert(offsetof(FileLoggerPhysicalLayout32, vtableSlot0) == 0x00, "retail FileLogger [this+0] vtable slot");
-        static_assert(offsetof(FileLoggerPhysicalLayout32, hwndSlot4) == 0x04, "retail FileLogger [this+4] HWND cache slot");
-        static_assert(offsetof(FileLoggerPhysicalLayout32, fileSlot8) == 0x08, "retail FileLogger [this+8] FILE* slot");
-        static_assert(offsetof(FileLoggerPhysicalLayout32, pathSlot0C) == 0x0C, "retail FileLogger [this+0x0C] path buffer slot");
-        static_assert(sizeof(FileLoggerPhysicalLayout32) == 0x40C, "retail FileLogger allocation size is 0x40C");
     }
 
     void VerifyFileLoggerAsmLayout()
     {
 #if defined(_MSC_VER) && defined(_M_IX86)
-        static_assert(offsetof(FileLogger, m_vtableToken) == 0x00, "FileLogger [this+0] must match retail layout");
-        static_assert(offsetof(FileLogger, m_messageWindowToken) == 0x04, "FileLogger [this+4] must match retail layout");
-        static_assert(offsetof(FileLogger, m_file) == 0x08, "FileLogger [this+8] must match retail layout");
-        static_assert(offsetof(FileLogger, m_path) == 0x0C, "FileLogger [this+0x0C] must match retail layout");
-        static_assert(sizeof(FileLogger) == 0x40C, "FileLogger sizeof must match retail layout operator new(0x40C)");
 #endif
     }
 

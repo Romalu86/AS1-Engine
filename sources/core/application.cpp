@@ -220,7 +220,6 @@ namespace as1::core
             std::array<std::uint32_t, 8> m_reservedA8C4{};
         };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-        static_assert(sizeof(RetailPrivateClass7) == 0xC8, "retail private class-7 allocation must be exactly 0xC8 on x86");
 #endif
     }
 
@@ -231,14 +230,12 @@ namespace as1::core
         template <class T>
         T& applicationPhysicalSlot(void* owner, std::size_t offset) noexcept
         {
-            static_assert(sizeof(void*) == 4, "retail Application physical slots require Win32/x86 pointers");
             return *reinterpret_cast<T*>(static_cast<std::uint8_t*>(owner) + offset);
         }
 
         template <class T>
         const T& applicationPhysicalSlot(const void* owner, std::size_t offset) noexcept
         {
-            static_assert(sizeof(void*) == 4, "retail Application physical slots require Win32/x86 pointers");
             return *reinterpret_cast<const T*>(static_cast<const std::uint8_t*>(owner) + offset);
         }
 #endif

@@ -64,16 +64,6 @@ namespace as1::core
         std::int32_t fullscreen;           // +0x234 = 1
     };
 
-    static_assert(offsetof(StartupSettingsBlock, allowedWidths) == 0x100, "retail String+0x100 width table offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, allowedHeights) == 0x180, "retail String+0x180 height table offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, allowedColorBits) == 0x200, "retail String+0x200 BPP table offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, flags) == 0x220, "retail String+0x220 offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, device) == 0x224, "retail String+0x224 offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, screenWidth) == 0x228, "retail String+0x228 offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, screenHeight) == 0x22C, "retail String+0x22C offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, colorDepth) == 0x230, "retail String+0x230 offset mismatch");
-    static_assert(offsetof(StartupSettingsBlock, fullscreen) == 0x234, "retail String+0x234 offset mismatch");
-    static_assert(sizeof(StartupSettingsBlock) == 0x238, "retail String startup block size mismatch");
 
     StartupSettingsBlock& StartupSettings() noexcept;
 

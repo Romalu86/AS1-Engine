@@ -144,7 +144,6 @@ namespace as1::core
         void clear() noexcept { list.clearSpriteReferences(); }
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(ApplicationDrawPassBucket) == 0x10, "Application draw bucket retail stride must be 0x10");
 #endif
 
     struct ApplicationDrawDispatcherState

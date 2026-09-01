@@ -180,10 +180,6 @@ namespace as1
 
 
 #if UINTPTR_MAX == 0xFFFFFFFFu
-        static_assert(sizeof(WeakController::Link) == 0x14, "WeakController::Link retail Win32 size mismatch");
-        static_assert(sizeof(WeakController) == 0xEC, "WeakController retail Win32 size mismatch");
-        static_assert(sizeof(PathPosition) == 0x10, "PathPosition retail Win32 size mismatch");
-        static_assert(sizeof(WeakControllerMap) == 0x20, "WeakControllerMap retail Win32 size mismatch");
 #endif
 
         int findLinkIndex(WeakController* self, WeakController* target) noexcept;

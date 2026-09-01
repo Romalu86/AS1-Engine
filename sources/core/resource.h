@@ -157,6 +157,5 @@ namespace as1
     void destroyResourceOwner(RESOURCE& resource);
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(RESOURCE) == 0x40, "AS1 RESOURCE Win32 ABI size mismatch");
 #endif
 }

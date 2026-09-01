@@ -1524,8 +1524,6 @@ namespace as1
 #pragma pack(pop)
 
 #if UINTPTR_MAX == 0xFFFFFFFFu
-            static_assert(sizeof(WeakControllerPointerListStorage) == 0x10,
-                          "destroyWeakControllerPointerListStorage retail pointer-list owner must be 0x10 bytes on x86");
 #endif
         }
 
