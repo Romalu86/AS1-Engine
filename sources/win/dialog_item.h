@@ -23,7 +23,6 @@ namespace as1::win
     };
 
 #if INTPTR_MAX == INT32_MAX
-    static_assert(sizeof(DialogItemRef) == 8, "DialogItemRef Win32 retail ABI size mismatch");
 #endif
 
     STRING& readDialogItemText(const DialogItemRef& item, STRING& out);

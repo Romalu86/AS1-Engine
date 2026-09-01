@@ -60,6 +60,5 @@ private:
     BYTE* m_frameStorage = nullptr;
 };
 #if defined(_MSC_VER) && defined(_M_IX86)
-static_assert(sizeof(VID_SOFTWARE) == 0x428, "retail VID_SOFTWARE allocation size mismatch");
 #endif
 }

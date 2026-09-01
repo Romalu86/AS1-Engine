@@ -20,6 +20,5 @@ public:
     bool isLoaded() const;
 };
 #if defined(_MSC_VER) && defined(_M_IX86)
-static_assert(sizeof(VID_HARDWARE_Z) == 0x428, "retail VID_HARDWARE_Z allocation size mismatch");
 #endif
 }

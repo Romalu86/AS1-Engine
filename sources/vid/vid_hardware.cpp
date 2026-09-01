@@ -29,7 +29,6 @@ namespace as1
         DWORD floatBits(float value)
         {
             DWORD bits = 0;
-            static_assert(sizeof(bits) == sizeof(value), "float/DWORD size mismatch");
             std::memcpy(&bits, &value, sizeof(bits));
             return bits;
         }

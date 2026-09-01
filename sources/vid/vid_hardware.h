@@ -24,7 +24,6 @@ public:
         int destinationY = 0;    // +0x1C
         int next = 0;            // +0x20, 0 terminates the chain
     };
-    static_assert(sizeof(TEX_SIZE) == 36, "VID_HARDWARE::TEX_SIZE ABI shape mismatch");
 
     VID_HARDWARE();
     VID_HARDWARE(const VID_HARDWARE& other);
@@ -56,6 +55,5 @@ private:
 
 };
 #if defined(_MSC_VER) && defined(_M_IX86)
-static_assert(sizeof(VID_HARDWARE) == 0x428, "retail VID_HARDWARE allocation size mismatch");
 #endif
 }

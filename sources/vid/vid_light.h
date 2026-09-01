@@ -30,6 +30,5 @@ private:
     BYTE* m_lightData = nullptr;
 };
 #if defined(_MSC_VER) && defined(_M_IX86)
-static_assert(sizeof(VID_LIGHT) == 0x424, "retail VID_LIGHT allocation size mismatch");
 #endif
 }

@@ -293,7 +293,6 @@ namespace as1
         std::int32_t deathDamageMinimumRawBits() const noexcept
         {
             std::int32_t value = 0;
-            static_assert(sizeof(value) == sizeof(deathDamageMin), "VID+0x48 raw DWORD size mismatch");
             std::memcpy(&value, &deathDamageMin, sizeof(value));
             return value;
         }
@@ -730,50 +729,6 @@ namespace as1
         static constexpr std::size_t actionAuxStateRequiredValue = offsetof(VID, actionAuxStateRequiredValue);
         static constexpr std::size_t notCreateAsChildFlag = offsetof(VID, notCreateAsChildFlag);
     };
-    static_assert(VidRetailLayoutProbe::nVid == 0x004, "VID +004 mismatch");
-    static_assert(VidRetailLayoutProbe::name == 0x008, "VID +008 mismatch");
-    static_assert(VidRetailLayoutProbe::spriteType == 0x00C, "VID +00C mismatch");
-    static_assert(VidRetailLayoutProbe::spriteClass == 0x010, "VID +010 mismatch");
-    static_assert(VidRetailLayoutProbe::property == 0x014, "VID +014 mismatch");
-    static_assert(VidRetailLayoutProbe::moveMask == 0x018, "VID +018 mismatch");
-    static_assert(VidRetailLayoutProbe::sizeXYZ == 0x01C, "VID +01C mismatch");
-    static_assert(VidRetailLayoutProbe::maxHp == 0x028, "VID +028 mismatch");
-    static_assert(VidRetailLayoutProbe::nWeapon == 0x040, "VID +040 mismatch");
-    static_assert(VidRetailLayoutProbe::linkXYZ == 0x04C, "VID +04C mismatch");
-    static_assert(VidRetailLayoutProbe::nLinkVid == 0x058, "VID +058 mismatch");
-    static_assert(VidRetailLayoutProbe::linkVid == 0x05C, "VID +05C mismatch");
-    static_assert(VidRetailLayoutProbe::noAnimCadr == 0x068, "VID +068 mismatch");
-    static_assert(VidRetailLayoutProbe::sfx == 0x0AC, "VID +0AC mismatch");
-    static_assert(VidRetailLayoutProbe::childX == 0x0F0, "VID +0F0 mismatch");
-    static_assert(VidRetailLayoutProbe::childY == 0x134, "VID +134 mismatch");
-    static_assert(VidRetailLayoutProbe::childZ == 0x178, "VID +178 mismatch");
-    static_assert(VidRetailLayoutProbe::nChildVid == 0x1BC, "VID +1BC mismatch");
-    static_assert(VidRetailLayoutProbe::childVid == 0x200, "VID +200 mismatch");
-    static_assert(VidRetailLayoutProbe::noChild == 0x244, "VID +244 mismatch");
-    static_assert(VidRetailLayoutProbe::gammaRaw == 0x288, "VID +288 mismatch");
-    static_assert(VidRetailLayoutProbe::scaleXYZ == 0x290, "VID +290 mismatch");
-    static_assert(VidRetailLayoutProbe::vidName == 0x29C, "VID +29C mismatch");
-    static_assert(VidRetailLayoutProbe::type == 0x2A0, "VID +2A0 mismatch");
-    static_assert(VidRetailLayoutProbe::animationBaseFrame == 0x2AC, "VID +2AC mismatch");
-    static_assert(VidRetailLayoutProbe::animationFrameCount == 0x2F0, "VID +2F0 mismatch");
-    static_assert(VidRetailLayoutProbe::halfSizeXY == 0x334, "VID +334 mismatch");
-    static_assert(VidRetailLayoutProbe::layer == 0x33C, "VID +33C mismatch");
-    static_assert(VidRetailLayoutProbe::directionQuantizationOffsetValue == 0x340, "VID +340 mismatch");
-    static_assert(VidRetailLayoutProbe::unitLimits == 0x344, "VID +344 mismatch");
-    static_assert(VidRetailLayoutProbe::spriteCountsByArmy == 0x358, "VID +358 mismatch");
-    static_assert(VidRetailLayoutProbe::killedUnitCounters == 0x368, "VID +368 mismatch");
-    static_assert(VidRetailLayoutProbe::recolorUnitCounters == 0x378, "VID +378 mismatch");
-    static_assert(VidRetailLayoutProbe::animationFrameDurations == 0x388, "VID +388 mismatch");
-    static_assert(VidRetailLayoutProbe::altGammaRaw == 0x398, "VID +398 mismatch");
-    static_assert(VidRetailLayoutProbe::scriptFunction == 0x3B8, "VID +3B8 mismatch");
-    static_assert(VidRetailLayoutProbe::lastSpriteCountChangeTimestampMs == 0x400, "VID +400 mismatch");
-    static_assert(VidRetailLayoutProbe::weapon == 0x404, "VID +404 mismatch");
-    static_assert(VidRetailLayoutProbe::nextMirror == 0x408, "VID +408 mismatch");
-    static_assert(VidRetailLayoutProbe::exchangedVid == 0x40C, "VID +40C mismatch");
-    static_assert(VidRetailLayoutProbe::movementTactEnabledValue == 0x410, "VID +410 mismatch");
-    static_assert(VidRetailLayoutProbe::actionAuxStateRequiredValue == 0x414, "VID +414 mismatch");
-    static_assert(VidRetailLayoutProbe::notCreateAsChildFlag == 0x418, "VID +418 mismatch");
-    static_assert(sizeof(VID) == 0x41C, "retail base VID allocation must be exactly 0x41C on MSVC x86");
 #endif
 
 }

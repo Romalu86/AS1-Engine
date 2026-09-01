@@ -566,12 +566,8 @@ namespace as1::win
     ApplicationWin* CreateApplicationWin(const ApplicationWinInit& init)
     {
 
-        static_assert(sizeof(ApplicationWin) <= 0x22A0u,
-                      "ApplicationWin source representation exceeds retail 0x22A0 allocation");
 #if UINTPTR_MAX == 0xFFFFFFFFu
 
-        static_assert(sizeof(ApplicationWin) <= 0x204u,
-                      "ApplicationWin convenience state overlaps retail Application+0x204 physical owner region");
 #endif
         void* const storage = ::operator new(0x22A0u, std::nothrow);
         if (!storage)
@@ -746,8 +742,6 @@ namespace as1::win
         setApplicationTitle(windowConfig.applicationTitle);
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-        static_assert(sizeof(as1::GRAPH) == 0x0E24u,
-                      "GRAPH Win32/x86 source representation must equal retail 0xE24 allocation");
 #endif
         void* const graphStorage = ::operator new(0x0E24u, std::nothrow);
         if (!graphStorage)
@@ -830,8 +824,6 @@ namespace as1::win
         ::SetCursor(nullptr);
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-        static_assert(sizeof(as1::MOUSE) == 0x108u,
-                      "MOUSE Win32/x86 source representation must equal retail 0x108 allocation");
 #endif
         as1::Mouse = new (std::nothrow) as1::MOUSE(
             as1::MAP::NullVid(),

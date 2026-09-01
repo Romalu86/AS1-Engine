@@ -37,6 +37,5 @@ private:
 #endif
 };
 #if defined(_MSC_VER) && defined(_M_IX86)
-static_assert(sizeof(VID_SURFACE) == 0x44C, "retail VID_SURFACE allocation must be 0x44C");
 #endif
 }

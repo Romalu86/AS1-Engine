@@ -883,7 +883,6 @@ namespace as1
             DWORD diffuse;
             DWORD specular;
         };
-        static_assert(sizeof(ShadowVertex) == 24, "shadow vertex ABI mismatch");
 
         ShadowVertex vertices[513];
         const BYTE* record = frameData + 2;

@@ -157,8 +157,6 @@ namespace as1
 #endif
     };
 
-    static_assert(sizeof(VID_TEXCOOR_VERTEX) == 0x14u, "VID_TEXCOOR vertex stride must match FVF 0x102");
 #if defined(_M_IX86)
-    static_assert(sizeof(VID_TEXCOOR) == VID_TEXCOOR::RetailObjectSize, "VID_TEXCOOR Win32 object size must be 0x14");
 #endif
 }

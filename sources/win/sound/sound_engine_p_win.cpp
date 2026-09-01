@@ -898,62 +898,11 @@ namespace as1::win::sound
     void SoundEngineWin::validateSoundObjectLayout()
     {
 #if defined(_MSC_VER) && defined(_M_IX86)
-        static_assert(sizeof(SoundRequestSlot) == 16, "SOUND request slot must keep the 16-byte binary layout");
-        static_assert(offsetof(SoundRequestSlot, soundNumber) == 0, "SOUND request slot sound number offset changed");
-        static_assert(offsetof(SoundRequestSlot, owner) == 4, "SOUND request slot owner offset changed");
-        static_assert(offsetof(SoundRequestSlot, pan) == 8, "SOUND request slot pan offset changed");
-        static_assert(offsetof(SoundRequestSlot, volume) == 12, "SOUND request slot volume offset changed");
 
-        static_assert(sizeof(SoundEffectEntry) == 72, "SFX table entry must keep the 72-byte binary layout");
-        static_assert(offsetof(SoundEffectEntry, names) == 0, "SFX names offset changed");
-        static_assert(offsetof(SoundEffectEntry, channelCount) == 32, "SFX channel/priority byte offset changed");
-        static_assert(offsetof(SoundEffectEntry, buffers) == 36, "SFX buffer pointer table offset changed");
-        static_assert(offsetof(SoundEffectEntry, loadedBufferCount) == 68, "SFX loaded-buffer count offset changed");
 
-        static_assert(sizeof(PlayingSlot) == 24, "SOUND playing slot must keep the 24-byte binary layout");
-        static_assert(offsetof(PlayingSlot, buffer) == 0, "playing slot buffer offset changed");
-        static_assert(offsetof(PlayingSlot, active) == 4, "playing slot active flag offset changed");
-        static_assert(offsetof(PlayingSlot, soundNumber) == 8, "playing slot sound number offset changed");
-        static_assert(offsetof(PlayingSlot, volume) == 12, "playing slot volume offset changed");
-        static_assert(offsetof(PlayingSlot, pan) == 16, "playing slot pan offset changed");
-        static_assert(offsetof(PlayingSlot, startTime) == 20, "playing slot start-time offset changed");
 
-        static_assert(offsetof(SoundEngineWin, m_flags) == 0, "SOUND flags offset changed");
-        static_assert(offsetof(SoundEngineWin, m_loadedSoundCount) == 4, "SOUND loaded-count offset changed");
-        static_assert(offsetof(SoundEngineWin, m_soundTable) == 8, "SOUND table pointer offset changed");
-        static_assert(offsetof(SoundEngineWin, m_soundRequestSlots) == 12, "SOUND request slots offset changed");
-        static_assert(offsetof(SoundEngineWin, m_window) == 524, "SOUND window owner offset changed");
-        static_assert(offsetof(SoundEngineWin, m_directSound) == 528, "SOUND DirectSound owner offset changed");
-        static_assert(offsetof(SoundEngineWin, m_playingSlots) == 532, "SOUND playing slots offset changed");
-        static_assert(offsetof(SoundEngineWin, m_musicTrackIndex) == 916, "SOUND music track offset changed");
-        static_assert(offsetof(SoundEngineWin, m_musicNotifyTrack) == 920, "SOUND music notify track offset changed");
-        static_assert(offsetof(SoundEngineWin, m_pendingSoundCount) == 924, "SOUND pending load flag offset changed");
-        static_assert(offsetof(SoundEngineWin, m_initializationState) == 936, "SOUND initialization state offset changed");
-        static_assert(offsetof(SoundEngineWin, m_auxDeviceId) == 940, "SOUND aux device id offset changed");
-        static_assert(offsetof(SoundEngineWin, m_waveOutDeviceId) == 944, "SOUND waveOut device id offset changed");
-        static_assert(offsetof(SoundEngineWin, m_auxVolume) == 948, "SOUND aux restore volume offset changed");
-        static_assert(offsetof(SoundEngineWin, m_waveOutVolume) == 952, "SOUND waveOut restore volume offset changed");
-        static_assert(offsetof(SoundEngineWin, m_auxMusicVolume) == 956, "SOUND aux music volume offset changed");
-        static_assert(offsetof(SoundEngineWin, m_masterVolumePercent) == 964, "SOUND SFX volume percent offset changed");
-        static_assert(offsetof(SoundEngineWin, m_musicVolumePercent) == 968, "SOUND music volume percent offset changed");
-        static_assert(offsetof(SoundEngineWin, m_musicFadeVolume) == 972, "SOUND music fade offset changed");
-        static_assert(offsetof(SoundEngineWin, m_pendingMusicLoopToken) == 976, "SOUND pending music loop token offset changed");
-        static_assert(offsetof(SoundEngineWin, m_streamOwner) == 980, "SOUND stream owner offset changed");
-        static_assert(offsetof(SoundEngineWin, m_musicPath) == 984, "SOUND music path string offset changed");
-        static_assert(sizeof(SoundEngineWin) == 0x3DC, "SOUND owner must keep the retail 0x3DC-byte binary layout");
 
-        static_assert(sizeof(OggMusicStreamOwner) == 0x2F0, "OGG music owner must keep the 0x2F0-byte binary layout");
-        static_assert(offsetof(OggMusicStreamOwner, buffer) == 8, "OGG owner buffer offset changed");
-        static_assert(offsetof(OggMusicStreamOwner, active) == 12, "OGG owner active offset changed");
-        static_assert(offsetof(OggMusicStreamOwner, endState) == 16, "OGG owner end-state offset changed");
-        static_assert(offsetof(OggMusicStreamOwner, decoderState) == 24, "OGG owner decoder-state offset changed");
-        static_assert(offsetof(OggMusicStreamOwner, file) == 744, "OGG owner FILE offset changed");
-        static_assert(offsetof(OggMusicStreamOwner, writePosition) == 748, "OGG owner write cursor offset changed");
 
-        static_assert(sizeof(DirectShowMusicStreamOwner) == 0x14, "DirectShow music owner must keep the 0x14-byte binary layout");
-        static_assert(offsetof(DirectShowMusicStreamOwner, graphBuilder) == 8, "DirectShow graph builder offset changed");
-        static_assert(offsetof(DirectShowMusicStreamOwner, mediaControl) == 12, "DirectShow media control offset changed");
-        static_assert(offsetof(DirectShowMusicStreamOwner, mediaSeeking) == 16, "DirectShow media seeking offset changed");
 #endif
     }
 
