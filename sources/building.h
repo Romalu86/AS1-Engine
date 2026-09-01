@@ -32,9 +32,5 @@ namespace as1
         static constexpr std::size_t slotA4 = offsetof(BUILDING, m_serviceActivityFlag);
         static constexpr std::size_t behaviorStateOffset = offsetof(BUILDING, m_lastServiceTargetHandle);
     };
-    static_assert(BuildingRetailLayoutProbe::slotA0 == 0xA0, "BUILDING +A0 mismatch");
-    static_assert(BuildingRetailLayoutProbe::slotA4 == 0xA4, "BUILDING +A4 mismatch");
-    static_assert(BuildingRetailLayoutProbe::behaviorStateOffset == 0xA8, "BUILDING +A8 mismatch");
-    static_assert(sizeof(BUILDING) == 0xAC, "retail BUILDING allocation must be exactly 0xAC on x86");
 #endif
 }

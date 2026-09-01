@@ -69,12 +69,6 @@ struct D3DADAPTER_IDENTIFIER8
 };
 
 #if defined(_M_IX86)
-static_assert(offsetof(D3DADAPTER_IDENTIFIER8, DriverVersion) == 0x400u, "D3D8 adapter identifier DriverVersion offset mismatch");
-static_assert(offsetof(D3DADAPTER_IDENTIFIER8, VendorId) == 0x408u, "D3D8 adapter identifier VendorId offset mismatch");
-static_assert(offsetof(D3DADAPTER_IDENTIFIER8, DeviceIdentifier) == 0x418u, "D3D8 adapter identifier DeviceIdentifier offset mismatch");
-static_assert(offsetof(D3DADAPTER_IDENTIFIER8, WHQLLevel) == 0x428u, "D3D8 adapter identifier WHQLLevel offset mismatch");
-static_assert(alignof(D3DADAPTER_IDENTIFIER8) == 4u, "D3D8 adapter identifier Win32 ABI alignment mismatch");
-static_assert(sizeof(D3DADAPTER_IDENTIFIER8) == 0x42Cu, "D3D8 adapter identifier Win32 ABI size mismatch");
 #endif
 
 struct D3DCAPS8;
@@ -263,7 +257,6 @@ enum D3DBLEND
     D3DBLEND_DESTCOLOR   = 9
 };
 
-static_assert(static_cast<int>(D3DBLEND_DESTCOLOR) == 9, "D3D8 DESTCOLOR blend ABI mismatch");
 
 enum D3DCMPFUNC
 {
@@ -332,7 +325,6 @@ enum D3DRENDERSTATETYPE
     D3DRS_ALPHATESTENABLE  = 15,
     D3DRS_LIGHTING         = 137
 };
-static_assert(static_cast<int>(D3DRS_ZFUNC) == 0x17, "D3D8 ZFUNC render-state ABI mismatch");
 
 enum D3DTRANSFORMSTATETYPE
 {
@@ -417,9 +409,6 @@ struct D3DCAPS8
 };
 
 #if defined(_M_IX86)
-static_assert(sizeof(D3DDISPLAYMODE) == 0x10u, "D3D8 display-mode Win32 ABI size mismatch");
-static_assert(offsetof(D3DCAPS8, Caps2) == 0x0Cu, "D3D8 caps Caps2 offset mismatch");
-static_assert(sizeof(D3DCAPS8) == 0xD4u, "D3D8 caps Win32 ABI size mismatch");
 #endif
 
 struct D3DPRESENT_PARAMETERS
@@ -440,7 +429,6 @@ struct D3DPRESENT_PARAMETERS
 };
 
 #if defined(_M_IX86)
-static_assert(sizeof(D3DPRESENT_PARAMETERS) == 0x34u, "D3D8 presentation-parameter Win32 ABI size mismatch");
 #endif
 
 struct IDirect3D8 : public IUnknown

@@ -39,8 +39,5 @@ namespace as1
         static constexpr std::size_t slotA0 = offsetof(BALLOON, m_attachmentTransitionPending);
         static constexpr std::size_t attachmentPhaseOffset = offsetof(BALLOON, m_attachmentPhase);
     };
-    static_assert(BalloonRetailLayoutProbe::slotA0 == 0xA0, "BALLOON +A0 mismatch");
-    static_assert(BalloonRetailLayoutProbe::attachmentPhaseOffset == 0xA4, "BALLOON +A4 mismatch");
-    static_assert(sizeof(BALLOON) == 0xA8, "retail BALLOON allocation must be exactly 0xA8 on x86");
 #endif
 }

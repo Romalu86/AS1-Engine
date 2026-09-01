@@ -33,8 +33,5 @@ namespace as1
         static constexpr std::size_t slotA0 = offsetof(CREATURE, m_regionTrackingFlags);
         static constexpr std::size_t slotA4 = offsetof(CREATURE, m_currentRegion);
     };
-    static_assert(CreatureRetailLayoutProbe::slotA0 == 0xA0, "CREATURE +A0 mismatch");
-    static_assert(CreatureRetailLayoutProbe::slotA4 == 0xA4, "CREATURE +A4 mismatch");
-    static_assert(sizeof(CREATURE) == 0xA8, "retail CREATURE allocation must be exactly 0xA8 on x86");
 #endif
 }

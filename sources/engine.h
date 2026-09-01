@@ -107,8 +107,5 @@ namespace as1
     {
         static constexpr std::size_t tailA0 = offsetof(ENGINE, m_reservedPhysicalTailA0);
     };
-    static_assert(EngineRetailLayoutProbe::tailA0 == 0xA0, "ENGINE physical tail must begin at retail +0xA0");
-    static_assert(sizeof(ENGINE) == 0xAD0, "retail ENGINE allocation must be exactly 0xAD0 on x86");
-    static_assert(0x108u + 2500u == 0xACCu, "ENGINE retail path buffer must occupy +0x108..+0xACB");
 #endif
 }

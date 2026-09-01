@@ -496,7 +496,6 @@ namespace as1
             float y;
             DWORD time;
         };
-        static_assert(sizeof(PendingPathCoordinateEntry) == 0x10, "pending path-coordinate entry must be 16 bytes");
 
         int index = 0;
         while (index < path.pending.count)

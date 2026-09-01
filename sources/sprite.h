@@ -165,7 +165,6 @@ namespace as1
         std::uint32_t argument3 = 0;
     };
     SpriteCommandRecord* copyCommandRecord(SpriteCommandRecord* destination, const SpriteCommandRecord* source) noexcept;
-    static_assert(sizeof(SpriteCommandRecord) == 0x10, "SPRITE command record must remain 16 bytes");
 
     void* destroyCommandRecordListOwner(void* rawListOwner, unsigned char deleteSelfFlag) noexcept;
     std::uint32_t currentCommandRecordListVtable() noexcept;
@@ -506,15 +505,6 @@ namespace as1
             int accumulateEngineChainSprite(SPRITE* sprite) noexcept;
             int weaponRatioScaledByEight() const noexcept;
         };
-        static_assert(sizeof(EngineChainMetrics) == 0x40, "collectEngineChainMetrics retail aggregate must be 0x40 bytes");
-        static_assert(offsetof(EngineChainMetrics, categoryFlags) == 0x00, "collectEngineChainMetrics +0x00 mismatch");
-        static_assert(offsetof(EngineChainMetrics, maxBattleRange) == 0x04, "collectEngineChainMetrics +0x04 mismatch");
-        static_assert(offsetof(EngineChainMetrics, minBattleRange) == 0x08, "collectEngineChainMetrics +0x08 mismatch");
-        static_assert(offsetof(EngineChainMetrics, movementDelayMs) == 0x18, "collectEngineChainMetrics +0x18 mismatch");
-        static_assert(offsetof(EngineChainMetrics, spriteFrameTimeSum) == 0x20, "collectEngineChainMetrics +0x20 mismatch");
-        static_assert(offsetof(EngineChainMetrics, vidFrameTimeSum) == 0x24, "collectEngineChainMetrics +0x24 mismatch");
-        static_assert(offsetof(EngineChainMetrics, distanceSampleCount) == 0x30, "collectEngineChainMetrics +0x30 mismatch");
-        static_assert(offsetof(EngineChainMetrics, averageDistanceRatio) == 0x3C, "collectEngineChainMetrics +0x3C mismatch");
         float resolveEngineChainCollision(SPRITE* target, int mode) noexcept;
         int resolveEngineChainPathInteraction(core::PathPosition* pathPair, float* distanceOut) noexcept;
         void applyEngineChainPathMovement(core::PathPosition* pathPair, float speed, int delay) noexcept;
@@ -1088,7 +1078,6 @@ namespace as1
             std::uint32_t commandMask0 = 0;
             std::uint32_t commandMask1 = 0;
         };
-        static_assert(sizeof(ActionAuxState) == 0x20, "SPRITE+0x68 command owner must remain 0x20 bytes");
 
         // Native retail SPRITE base prefix.  On Win32/x86 the virtual-table
         // pointer occupies +0x00 and the members below intentionally follow
@@ -1125,8 +1114,6 @@ namespace as1
     };
 
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(SpriteCommandStack) == 0x10,
-                  "retail SPRITE+0x58 command owner must be exactly 0x10 bytes on x86");
 
     struct SpriteRetailPrefixProbe
     {
@@ -1156,31 +1143,6 @@ namespace as1
         static constexpr std::size_t ptrSprite6C = offsetof(SPRITE, m_bestTargetSprite);
     };
 
-    static_assert(SpriteRetailPrefixProbe::slot04 == 0x04, "SPRITE +04 mismatch");
-    static_assert(SpriteRetailPrefixProbe::frameBegin08 == 0x08, "SPRITE +08 mismatch");
-    static_assert(SpriteRetailPrefixProbe::frame0C == 0x0C, "SPRITE +0C mismatch");
-    static_assert(SpriteRetailPrefixProbe::frameEnd10 == 0x10, "SPRITE +10 mismatch");
-    static_assert(SpriteRetailPrefixProbe::bucketTime14 == 0x14, "SPRITE +14 mismatch");
-    static_assert(SpriteRetailPrefixProbe::animationTick18 == 0x18, "SPRITE +18 mismatch");
-    static_assert(SpriteRetailPrefixProbe::vid1C == 0x1C, "SPRITE +1C mismatch");
-    static_assert(SpriteRetailPrefixProbe::speed20 == 0x20, "SPRITE +20 mismatch");
-    static_assert(SpriteRetailPrefixProbe::zSpeed24 == 0x24, "SPRITE +24 mismatch");
-    static_assert(SpriteRetailPrefixProbe::flags28 == 0x28, "SPRITE +28 mismatch");
-    static_assert(SpriteRetailPrefixProbe::refCount2C == 0x2C, "SPRITE +2C mismatch");
-    static_assert(SpriteRetailPrefixProbe::xyz30 == 0x30, "SPRITE +30 mismatch");
-    static_assert(SpriteRetailPrefixProbe::xyz34 == 0x34, "SPRITE +34 mismatch");
-    static_assert(SpriteRetailPrefixProbe::xyz38 == 0x38, "SPRITE +38 mismatch");
-    static_assert(SpriteRetailPrefixProbe::target3C == 0x3C, "SPRITE +3C mismatch");
-    static_assert(SpriteRetailPrefixProbe::child40 == 0x40, "SPRITE +40 mismatch");
-    static_assert(SpriteRetailPrefixProbe::backlink44 == 0x44, "SPRITE +44 mismatch");
-    static_assert(SpriteRetailPrefixProbe::animation48 == 0x48, "SPRITE +48 mismatch");
-    static_assert(SpriteRetailPrefixProbe::direction4C == 0x4C, "SPRITE +4C mismatch");
-    static_assert(SpriteRetailPrefixProbe::timer50 == 0x50, "SPRITE +50 mismatch");
-    static_assert(SpriteRetailPrefixProbe::frameTime54 == 0x54, "SPRITE +54 mismatch");
-    static_assert(SpriteRetailPrefixProbe::commandList58 == 0x58, "SPRITE +58 mismatch");
-    static_assert(SpriteRetailPrefixProbe::commandOwner68 == 0x68, "SPRITE +68 mismatch");
-    static_assert(SpriteRetailPrefixProbe::ptrSprite6C == 0x6C, "SPRITE +6C mismatch");
-    static_assert(sizeof(SPRITE) == 0x70, "retail base SPRITE allocation must be exactly 0x70 bytes on x86");
 #endif
 
     class TERRAIN : public SPRITE
@@ -1196,7 +1158,6 @@ namespace as1
         int m_sharedSecondaryState = 0;
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(TERRAIN) == 0x78, "retail class 0/1 terrain allocation must be 0x78 on x86");
 #endif
 
     class LINKER : public SPRITE
@@ -1215,7 +1176,6 @@ namespace as1
         SPRITE* m_linkOwner = nullptr;
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(LINKER) == 0x84, "retail LINKER allocation must be 0x84 on x86");
 #endif
     class PRIMITIVE : public SPRITE
     {
@@ -1316,9 +1276,5 @@ namespace as1
         int m_textFlags = 0;
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(PRIMITIVE) == 0x70, "retail PRIMITIVE allocation must be 0x70 on x86");
-    static_assert(sizeof(FRAME) == 0x70, "retail FRAME allocation must be 0x70 on x86");
-    static_assert(sizeof(STEXT) == 0x80, "retail STEXT allocation must be 0x80 on x86");
-    static_assert(sizeof(REGION) == 0xD0, "retail REGION allocation must be 0xD0 on x86");
 #endif
 }

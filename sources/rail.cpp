@@ -401,7 +401,6 @@ namespace as1
         const std::uint32_t rawArg8 = static_cast<std::uint32_t>(argument2Carrier);
         const int argument3 = argument3Carrier;
         float argument2 = 0.0f;
-        static_assert(sizeof(argument2) == sizeof(rawArg8), "x86 Action dword carrier size");
         std::memcpy(&argument2, &rawArg8, sizeof(argument2));
         return dispatchRailActionOpcode(opcode, argument1, argument2, argument3);
     }

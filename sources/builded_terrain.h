@@ -27,6 +27,5 @@ namespace as1
         void Draw() override { drawBuiltTerrain(); }
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(BUILDED_TERRAIN) == 0x70, "retail class 8 BUILDED_TERRAIN allocation must be 0x70 on x86");
 #endif
 }

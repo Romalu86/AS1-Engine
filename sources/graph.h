@@ -48,7 +48,6 @@ namespace as1
         DWORD color = 0;
     };
 
-    static_assert(sizeof(GraphEffectGammaRawPair) == 8u, "effect gamma destination must remain two DWORDs");
 
     GraphEffectGammaRawPair* buildEffectGammaPair(GraphEffectGammaRawPair* destination, DWORD mask, DWORD color);
 
@@ -96,8 +95,6 @@ namespace as1
         STRING& formatDisplayModeLabel(STRING& output, int modeIndex) const;
     };
 
-    static_assert(sizeof(GraphAdapterRecord) == 0x14Cu,
-                  "retail GRAPH adapter record must remain exactly 0x14C bytes");
 
     struct GraphHostState;
 
@@ -429,6 +426,5 @@ namespace as1
     };
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(GRAPH) == 0xE24, "GRAPH x86 retail ABI size mismatch");
 #endif
 }

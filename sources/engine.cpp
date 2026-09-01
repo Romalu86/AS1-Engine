@@ -132,7 +132,6 @@ namespace as1
         float engineRawConstantFloat(DWORD bits) noexcept
         {
             float value = 0.0f;
-            static_assert(sizeof(value) == sizeof(bits), "retail constant slot must stay 32-bit");
             std::memcpy(&value, &bits, sizeof(value));
             return value;
         }

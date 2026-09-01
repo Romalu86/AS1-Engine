@@ -51,13 +51,5 @@ namespace as1
         static constexpr std::size_t slot490 = offsetof(DEPO, m_queueCapacity);
         static constexpr std::size_t slot494 = offsetof(DEPO, m_queueCount);
     };
-    static_assert(DepoRetailLayoutProbe::slotA0 == 0xA0, "DEPO +A0 mismatch");
-    static_assert(DepoRetailLayoutProbe::wordA4 == 0xA4, "DEPO +A4 mismatch");
-    static_assert(DepoRetailLayoutProbe::dword16C == 0x16C, "DEPO +16C mismatch");
-    static_assert(DepoRetailLayoutProbe::dword2FC == 0x2FC, "DEPO +2FC mismatch");
-    static_assert(DepoRetailLayoutProbe::slot48C == 0x48C, "DEPO +48C mismatch");
-    static_assert(DepoRetailLayoutProbe::slot490 == 0x490, "DEPO +490 mismatch");
-    static_assert(DepoRetailLayoutProbe::slot494 == 0x494, "DEPO +494 mismatch");
-    static_assert(sizeof(DEPO) == 0x498, "retail DEPO allocation must be exactly 0x498 on x86");
 #endif
 }

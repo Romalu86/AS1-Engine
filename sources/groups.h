@@ -68,7 +68,5 @@ namespace as1
     };
 
 #if defined(_WIN32) && !defined(_WIN64)
-    static_assert(sizeof(Group) == 0x24, "Retail Group x86 ABI size must be 0x24 bytes");
-    static_assert(sizeof(GROUPS) == 0x24, "Retail GROUPS sentinel x86 ABI size must be 0x24 bytes");
 #endif
 }

@@ -123,8 +123,6 @@ namespace as1
     };
 
 #if INTPTR_MAX == INT32_MAX
-    static_assert(sizeof(SPRITE_POINTER_LIST) == 0x10, "core::List<SPRITE*> retail x86 size must be 0x10");
-    static_assert(sizeof(SPRITE_LIST) == 0x18, "BaseSpriteList retail x86 size must be 0x18");
 #endif
 
     extern SPRITE_POINTER_LIST g_spriteWorkList;

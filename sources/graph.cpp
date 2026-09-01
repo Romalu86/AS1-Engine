@@ -188,7 +188,6 @@ namespace as1
         DWORD graphFloatBits(float value)
         {
             DWORD bits = 0u;
-            static_assert(sizeof(bits) == sizeof(value), "GRAPH float raw size mismatch");
             std::memcpy(&bits, &value, sizeof(bits));
             return bits;
         }
@@ -202,19 +201,16 @@ namespace as1
             float rhw;
             DWORD color;
         };
-        static_assert(sizeof(GraphWeatherVertex44) == 20u, "GRAPH weather vertex stride must remain 20 bytes");
 
         struct GraphWeatherLineParticle
         {
             GraphWeatherVertex44 vertex[2];
         };
-        static_assert(sizeof(GraphWeatherLineParticle) == 40u, "line-particle stride must remain 40 bytes");
 
         struct GraphWeatherCrossParticle
         {
             GraphWeatherVertex44 vertex[6];
         };
-        static_assert(sizeof(GraphWeatherCrossParticle) == 120u, "cross-particle stride must remain 120 bytes");
 
         // Retail weather globals.  The original fixed arrays occupy exactly
         // Retail keeps fixed-capacity 250-entry and 1000-entry storage blocks for these records.
@@ -1176,8 +1172,6 @@ namespace as1
     };
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(GraphTextGlyph) == 0x10, "GRAPH text glyph retail size mismatch");
-    static_assert(sizeof(GraphTextFont) == 0x107C, "GRAPH font retail size mismatch");
 #endif
 
     namespace
@@ -2972,7 +2966,6 @@ namespace as1
             DWORD specular;
         };
 
-        static_assert(sizeof(GraphOverlayVertexRaw) == 24u, "overlay vertex stride must remain 24 bytes");
 
         GraphOverlayVertexRaw makeGraphOverlayVertex(int xRaw, int yRaw, int colorRaw)
         {

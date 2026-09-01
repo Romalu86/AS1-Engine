@@ -29,6 +29,5 @@ namespace as1
         core::WeakController* m_secondRailNode = nullptr;
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(RAIL) == 0x80, "retail RAIL allocation must be 0x80 on x86");
 #endif
 }

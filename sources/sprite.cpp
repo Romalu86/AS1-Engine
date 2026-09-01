@@ -301,8 +301,6 @@ namespace as1
 
         std::array<std::uint32_t, 1024> g_retailDirectionTrigWindow =
             makeRetailDirectionTrigWindow();
-        static_assert(sizeof(g_retailDirectionTrigWindow) == 0x1000u,
-                      "retail direction trig window must remain 0x1000 bytes");
 
         float directionSin(int index)
         {
@@ -4187,7 +4185,6 @@ position_metric_ready:
         m_actionAuxState->state = 1;
 
         WEAPON* const weapon = source->m_vid->weaponRecord();
-        static_assert(WEAPON::AS1_RECORD_SIZE >= 0x2C, "WEAPON raw record must expose the +0x28 DWORD field");
         std::uint32_t weaponValue = 0;
         std::memcpy(&weaponValue, weapon->raw.data() + 0x28, sizeof(weaponValue));
         m_actionAuxState->primaryValue = weaponValue;

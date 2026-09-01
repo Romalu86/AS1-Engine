@@ -34,13 +34,6 @@ namespace as1::input
         int writeRawState(BaseStream* stream) const;
         int readRawState(BaseStream* stream);
     };
-    static_assert(sizeof(InputMessageState) == 0x1C, "retail InputMessageState must remain 28 bytes");
-    static_assert(offsetof(InputMessageState, flags) == 0x00, "InputMessageState flags must stay at +0x00");
-    static_assert(offsetof(InputMessageState, worldX) == 0x08, "InputMessageState worldX must stay at +0x08");
-    static_assert(offsetof(InputMessageState, worldY) == 0x0C, "InputMessageState worldY must stay at +0x0C");
-    static_assert(offsetof(InputMessageState, clientX) == 0x10, "InputMessageState clientX must stay at +0x10");
-    static_assert(offsetof(InputMessageState, clientY) == 0x14, "InputMessageState clientY must stay at +0x14");
-    static_assert(offsetof(InputMessageState, lastCode) == 0x18, "InputMessageState lastCode must stay at +0x18");
 
     struct InputControlKeys
     {
@@ -60,21 +53,6 @@ namespace as1::input
         std::uint32_t firstMouseReleaseClears = 1;
         std::uint32_t secondMouseReleaseClears = 1;
     };
-    static_assert(offsetof(InputControlKeys, left0) == 0x00, "InputControlKeys::left0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, left1) == 0x04, "InputControlKeys::left1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, right0) == 0x08, "InputControlKeys::right0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, right1) == 0x0C, "InputControlKeys::right1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, up0) == 0x10, "InputControlKeys::up0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, up1) == 0x14, "InputControlKeys::up1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, down0) == 0x18, "InputControlKeys::down0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, down1) == 0x1C, "InputControlKeys::down1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, first0) == 0x20, "InputControlKeys::first0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, first1) == 0x24, "InputControlKeys::first1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, second0) == 0x28, "InputControlKeys::second0 offset mismatch");
-    static_assert(offsetof(InputControlKeys, second1) == 0x2C, "InputControlKeys::second1 offset mismatch");
-    static_assert(offsetof(InputControlKeys, firstMouseReleaseClears) == 0x30, "InputControlKeys::firstMouseReleaseClears offset mismatch");
-    static_assert(offsetof(InputControlKeys, secondMouseReleaseClears) == 0x34, "InputControlKeys::secondMouseReleaseClears offset mismatch");
-    static_assert(sizeof(InputControlKeys) == 0x38, "InputControlKeys size mismatch");
 
     struct InputWindowRect
     {

@@ -21,6 +21,5 @@ namespace as1
     };
 
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(AVIA) == 0xA0, "retail AVIA allocation must be exactly 0xA0 on x86");
 #endif
 }

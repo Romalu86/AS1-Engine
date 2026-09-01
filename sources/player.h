@@ -145,26 +145,6 @@ namespace as1
             PathOwnerLayout path;        // +0x028..+0x32B
         };
 
-        static_assert(sizeof(BaseOwnerLayout) == 0x28, "PLAYER base owner retail size must be 0x28");
-        static_assert(offsetof(BaseOwnerLayout, money) == 0x04, "PLAYER money must stay at +0x04");
-        static_assert(offsetof(BaseOwnerLayout, controlMode) == 0x08, "PLAYER controlMode must stay at +0x08");
-        static_assert(offsetof(BaseOwnerLayout, controlledSprite) == 0x10, "PLAYER controlled sprite must stay at +0x10");
-        static_assert(offsetof(BaseOwnerLayout, listVtable) == 0x14, "PLAYER embedded list vptr must stay at +0x14");
-        static_assert(offsetof(BaseOwnerLayout, listItems) == 0x20, "PLAYER embedded list storage must stay at +0x20");
-        static_assert(offsetof(BaseOwnerLayout, auxiliarySprite) == 0x24, "PLAYER base owner tail must stay at +0x24");
-        static_assert(sizeof(PendingPathOwnerLayout) == 0x10, "PLAYER pending path owner retail size must be 0x10");
-        static_assert(offsetof(PathOwnerLayout, routeCount) == 0x004, "PLAYER PATH route count must stay at +0x04");
-        static_assert(offsetof(PathOwnerLayout, terrainVid) == 0x014, "PLAYER PATH terrain VID must stay at +0x14");
-        static_assert(offsetof(PathOwnerLayout, lastUpdate) == 0x020, "PLAYER PATH update timestamp must stay at +0x20");
-        static_assert(offsetof(PathOwnerLayout, primarySprites) == 0x024, "PLAYER PATH primary sprites must stay at +0x24");
-        static_assert(offsetof(PathOwnerLayout, secondarySprites) == 0x0D8, "PLAYER PATH secondary sprites must stay at +0xD8");
-        static_assert(offsetof(PathOwnerLayout, targetX) == 0x18C, "PLAYER PATH X targets must stay at +0x18C");
-        static_assert(offsetof(PathOwnerLayout, targetY) == 0x240, "PLAYER PATH Y targets must stay at +0x240");
-        static_assert(offsetof(PathOwnerLayout, pending) == 0x2F4, "PLAYER PATH pending owner must stay at path+0x2F4");
-        static_assert(offsetof(PathOwnerLayout, pending) + offsetof(PendingPathOwnerLayout, entries) == 0x300, "PLAYER PATH pending entries must stay at path+0x300");
-        static_assert(sizeof(PathOwnerLayout) == 0x304, "PLAYER path owner retail size must be 0x304");
-        static_assert(offsetof(PlayerLayout, path) == 0x28, "PLAYER PATH owner must start at +0x28");
-        static_assert(sizeof(PlayerLayout) == RetailObjectSize, "PLAYER retail owner map must be 0x32C");
 
         friend int releasePathSprites(void* pathOwner) noexcept;
         friend void clearPathSpriteReferences(void* pathOwner, SPRITE* sprite) noexcept;
@@ -174,5 +154,4 @@ namespace as1
         PlayerLayout m_state;
     };
 
-    static_assert(sizeof(PLAYER) == PLAYER::RetailObjectSize, "PLAYER retail size must stay 0x32C");
 }

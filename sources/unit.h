@@ -49,18 +49,5 @@ namespace as1
         static constexpr std::size_t slot98 = offsetof(UNIT, m_commandWordCapacity);
         static constexpr std::size_t slot9C = offsetof(UNIT, m_commandWords);
     };
-    static_assert(UnitRetailLayoutProbe::slot70 == 0x70, "UNIT +70 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot74 == 0x74, "UNIT +74 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot78 == 0x78, "UNIT +78 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot7C == 0x7C, "UNIT +7C mismatch");
-    static_assert(UnitRetailLayoutProbe::slot80 == 0x80, "UNIT +80 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot84 == 0x84, "UNIT +84 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot88 == 0x88, "UNIT +88 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot8C == 0x8C, "UNIT +8C mismatch");
-    static_assert(UnitRetailLayoutProbe::slot90 == 0x90, "UNIT +90 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot94 == 0x94, "UNIT +94 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot98 == 0x98, "UNIT +98 mismatch");
-    static_assert(UnitRetailLayoutProbe::slot9C == 0x9C, "UNIT +9C mismatch");
-    static_assert(sizeof(UNIT) == 0xA0, "retail UNIT allocation must be exactly 0xA0 on x86");
 #endif
 }

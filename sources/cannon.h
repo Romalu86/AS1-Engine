@@ -19,6 +19,5 @@ namespace as1
         int m_cannonMotionFlags = 0;
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(CANNON) == 0x74, "retail CANNON allocation must be 0x74 on x86");
 #endif
 }

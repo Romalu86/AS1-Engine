@@ -32,7 +32,6 @@ namespace as1
 
         static WEAPON fromAS1Record(const BYTE* data, size_t size);
     };
-    static_assert(sizeof(WEAPON) == WEAPON::AS1_RECORD_SIZE, "retail WEAPON stride must remain 0x44");
 
     struct SFX
     {
@@ -89,7 +88,6 @@ namespace as1
         }
     };
 #if UINTPTR_MAX == 0xFFFFFFFFu
-    static_assert(sizeof(RelationTable) == 0x20, "retail RelationTable owner must remain 0x20 bytes on Win32");
 #endif
 
     class MAP

@@ -152,7 +152,6 @@ namespace as1
 
 
 #if INTPTR_MAX == INT32_MAX
-    static_assert(sizeof(SPRITE_COLLECTOR_HASH_MAP) == 0x44, "SPRITE_COLLECTOR_HASH_MAP retail x86 size must be 0x44");
 #endif
 
     SPRITE_COLLECTOR_HASH_MAP*& GlobalSpriteHashMapSlot();

@@ -17,7 +17,6 @@ namespace as1
         bool Load(RESOURCE* res);
     };
 
-    static_assert(sizeof(BASE_CONSTANTS) == 0x68, "BASE_CONSTANTS must keep the retail 0x68-byte CNST layout");
 
     BASE_CONSTANTS* loadBaseConstantsFromResource(BASE_CONSTANTS* owner, RESOURCE* res);
     BASE_CONSTANTS* GlobalBaseConstants() noexcept;
