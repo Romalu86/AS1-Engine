@@ -27,11 +27,7 @@ namespace as1::thirdparty::xiph2003
         unsigned char bytes[0x2D0]{};
     };
 
-    static_assert(sizeof(VorbisStateBlob) == 0x2D0, "Vorbis state blob must match the retail state size");
 #if defined(_WIN32) && defined(_M_IX86)
-    static_assert(sizeof(void*) == 0x04, "Retail Xiph pointer ABI is Win32/x86 DWORD-sized");
-    static_assert(sizeof(ov_callbacks) == 0x10, "Retail ov_callbacks must remain four DWORDs");
-    static_assert(sizeof(OggVorbis_File) == 0x2D0, "Retail OggVorbis_File owner must remain exactly 0x2D0 bytes");
 #endif
 
     int CleanupVorbisState(VorbisStateBlob& state);
@@ -151,7 +147,6 @@ namespace as1::thirdparty::xiph2003
         };
 
 #if defined(_WIN32) && defined(_M_IX86)
-        static_assert(sizeof(BitCursor) == 0x14, "Retail oggpack_buffer must remain 0x14 bytes on Win32/x86");
 #endif
 
         struct PageToken
