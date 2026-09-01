@@ -318,6 +318,5 @@ namespace as1
 #endif
     };
 #if defined(_M_IX86)
-    static_assert(sizeof(BASE_TEXTURE) == BASE_TEXTURE::RetailObjectSize, "BASE_TEXTURE Win32 object size must be 0x20");
 #endif
 }

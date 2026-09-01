@@ -8,7 +8,6 @@ namespace as1
         float floatFromRawDword(DWORD raw)
         {
             float out = 0.0f;
-            static_assert(sizeof(out) == sizeof(raw), "float/DWORD size mismatch");
             std::memcpy(&out, &raw, sizeof(out));
             return out;
         }

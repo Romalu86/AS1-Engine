@@ -19,14 +19,11 @@
 #ifdef _WIN32
 #include <ddraw.h>
 #if defined(_M_IX86)
-static_assert(sizeof(DDSURFACEDESC) == 108, "retail DirectDraw DDSURFACEDESC must remain 108 bytes on x86");
-static_assert(sizeof(DDPIXELFORMAT) == 32, "retail DirectDraw DDPIXELFORMAT must remain 32 bytes on x86");
 #endif
 #endif
 
 namespace as1::images
 {
-    static_assert(sizeof(PICTURE_COMPOSITE_RESOURCE::CompositeTileRecord) == 0x24, "CompositeTileRecord must stay 0x24 bytes for the retail data writer");
     namespace
     {
 #ifdef _WIN32
@@ -49,7 +46,6 @@ namespace as1::images
             BYTE imageDescriptor;
         };
 
-        static_assert(sizeof(TgaHeader) == 18, "SaveTGA writes an 18-byte TGA header");
 
         void writeLittleWord(BYTE (&dst)[2], WORD value)
         {

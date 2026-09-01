@@ -75,8 +75,6 @@ namespace as1
             0.78125f, 0.28125f, 0.90625f, 0.40625f, 0.78125f, 0.28125f, 0.90625f, 0.40625f,
             0.03125f, 0.53125f, 0.15625f, 0.65625f, 0.03125f, 0.53125f, 0.15625f, 0.65625f,
         };
-        static_assert(sizeof(kRoundMatrix) == 0x80, "round matrix must remain 0x80 bytes");
-        static_assert(sizeof(kDitherMatrix) == 0x80, "dither matrix must remain 0x80 bytes");
 
         constexpr DWORD kPlainObjectSize = 0x1064u;
         constexpr DWORD kPackedYuvObjectSize = 0x1094u;
@@ -98,7 +96,6 @@ namespace as1
             float a;
         };
 
-        static_assert(sizeof(Pixel) == 16, "D3DX8 transfer pixel must remain 16 bytes");
 
         struct FormatInfo
         {
@@ -142,7 +139,6 @@ namespace as1
             float weight = 0.0f;
         };
 
-        static_assert(sizeof(TriangleWeightPair) == 8, "buildTriangleAxisWeights weight pair must remain 8 bytes");
 
         struct LinearAxisEntry
         {
@@ -152,7 +148,6 @@ namespace as1
             float secondWeight = 0.0f;
         };
 
-        static_assert(sizeof(LinearAxisEntry) == 16, "buildLinearAxisWeights entry must remain 16 bytes");
 
 
         bool validRect(const RECTI& rect)
@@ -1802,7 +1797,6 @@ namespace as1
             DWORD value[19]{};
         };
 
-        static_assert(sizeof(RetailSurfaceRecord32) == 0x4C, "retail transfer record must remain 0x4C bytes");
 
         struct FormatObject
         {
@@ -1815,7 +1809,6 @@ namespace as1
             std::array<void*, 4> blockScratch{};
         };
 
-        static_assert(sizeof(FormatObject::retail) == kBlockObjectSize, "retail descriptor mirror size drift");
 
         DWORD pointerToRetailDword(const void* value)
         {

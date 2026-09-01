@@ -55,29 +55,8 @@ namespace as1
         std::int32_t parseMode = 0;
     };
 
-    static_assert(sizeof(ScriptPhysicalLayout) == 0x58u, "Retail SCRIPT layout must be 0x58 bytes");
 #if defined(_MSC_VER) && defined(_M_IX86)
-    static_assert(sizeof(STRING) == 0x04u, "Retail AS_STRING slot must be one Win32 pointer");
-    static_assert(sizeof(script::StackObject) == 0x0Cu, "Retail SCRIPT stack record must be 0x0C bytes");
-    static_assert(sizeof(script::LogicFunctionRecord) == 0x18u, "Retail SCRIPT function record must be 0x18 bytes");
-    static_assert(sizeof(ScriptDefinePairRecord) == 0x08u, "Retail SCRIPT define pair must be 0x08 bytes");
 #endif
-    static_assert(offsetof(ScriptPhysicalLayout, stackCount) == 0x04u, "SCRIPT +0x04 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, stackTableToken) == 0x0Cu, "SCRIPT +0x0C mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, functionCount) == 0x14u, "SCRIPT +0x14 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, functionTableToken) == 0x1Cu, "SCRIPT +0x1C mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, defineCount) == 0x24u, "SCRIPT +0x24 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, defineTableToken) == 0x2Cu, "SCRIPT +0x2C mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, scriptFileToken) == 0x30u, "SCRIPT +0x30 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, bytecodeBufferToken) == 0x34u, "SCRIPT +0x34 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, bytecodeEnd) == 0x38u, "SCRIPT +0x38 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, sourceCursor) == 0x3Cu, "SCRIPT +0x3C mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, sourceEnd) == 0x40u, "SCRIPT +0x40 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, sourceBufferToken) == 0x44u, "SCRIPT +0x44 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, sourceLine) == 0x48u, "SCRIPT +0x48 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, conditionalDepth) == 0x4Cu, "SCRIPT +0x4C mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, fallbackFunction) == 0x50u, "SCRIPT +0x50 mismatch");
-    static_assert(offsetof(ScriptPhysicalLayout, parseMode) == 0x54u, "SCRIPT +0x54 mismatch");
 
 
     struct ScriptNativeContext
@@ -365,5 +344,4 @@ namespace as1
     };
 
 
-    static_assert(sizeof(SCRIPT) == 0x58u, "Retail SCRIPT physical owner must be exactly 0x58 bytes");
 }

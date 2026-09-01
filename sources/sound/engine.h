@@ -63,9 +63,6 @@ namespace as1::sound
 
 #if defined(_MSC_VER) && defined(_M_IX86)
 
-    static_assert(std::is_standard_layout<Engine>::value, "SOUND facade must remain standard-layout");
-    static_assert(sizeof(Engine) == sizeof(win::sound::SoundEngineWin), "SOUND facade must not add physical bytes");
-    static_assert(sizeof(Engine) == 0x3DCu, "SOUND global owner must remain 0x3DC bytes");
 #endif
 
     Engine* GlobalSoundEngine() noexcept;

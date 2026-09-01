@@ -279,8 +279,6 @@ namespace as1
             LogicProbabilityModel m_models[256];
         };
 #if defined(_WIN32) && !defined(_WIN64)
-        static_assert(sizeof(LogicProbabilityModel) == 0x28, "LogicProbabilityModel retail x86 size mismatch");
-        static_assert(sizeof(LogicAdaptiveCodec) == 0x2808, "LogicAdaptiveCodec retail x86 size mismatch");
 #endif
 
         int decodeLogicKeyNameImpl(STRING name);

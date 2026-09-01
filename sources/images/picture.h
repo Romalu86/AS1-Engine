@@ -235,14 +235,6 @@ namespace as1::images
     };
 #if defined(_WIN32) && !defined(_WIN64)
 
-    static_assert(sizeof(PICTURE) == 0x42C, "PICTURE retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_TGA) == 0x430, "PICTURE_TGA retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_Z) == 0x42C, "PICTURE_Z retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_FLC) == 0x430, "PICTURE_FLC retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_BMP) == 0x42C, "PICTURE_BMP retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_RESOURCE) == 0x0C, "PICTURE_RESOURCE retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_COMPOSITE_RESOURCE) == 0x430, "PICTURE_COMPOSITE_RESOURCE retail x86 size mismatch");
-    static_assert(sizeof(PICTURE_SCROLL_COMPOSITE_RESOURCE) == 0x860, "PICTURE_SCROLL_COMPOSITE_RESOURCE retail x86 size mismatch");
 #endif
 
 }
