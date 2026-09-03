@@ -1,7 +1,0 @@
-BLUE IMPLANT
-adjust strength
-
-DESCRIPTION:  
-increases stamina, 
-allows you to carry 
-more ammo.

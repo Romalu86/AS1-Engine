@@ -1,8 +1,0 @@
-AMMUNITION FOR WEAPON 04: 
-minigun shell box
-
-PARAMETERS:
-damage: 6 
-radius: 5 
-reload: 10 
-speed : INSTANTLY

@@ -1,7 +1,0 @@
-EQUIPMENT:
-rescue bag
-
-DESCRIPTION:  
-in case of critical damage 
-automatically restore your life 
-level.

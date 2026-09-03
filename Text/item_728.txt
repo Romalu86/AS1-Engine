@@ -1,7 +1,0 @@
-EQUIPMENT:
-flashlight
-
-DESCRIPTION:  
-in the darkness can light 
-limited area. it won't allow 
-you to stay in full darkness.
