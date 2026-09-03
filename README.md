@@ -1,4 +1,4 @@
-# AS1 Engine 1.0
+# AS1 Engine 1.22 (WIP, Currently unavailable.)
 
 AS1 Engine is a source release of the reconstructed/reimplemented **Alien Shooter (2003)** engine together with the runtime game data required by this package.
 
