@@ -1,1 +1,1 @@
-# AS1 Engine 1.22 (WIP, Currently unavailable.)
+# AS1 Map Editor (WIP, Currently unavailable.)
