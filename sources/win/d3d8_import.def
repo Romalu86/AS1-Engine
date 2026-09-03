@@ -1,3 +1,0 @@
-LIBRARY d3d8.dll
-EXPORTS
-    Direct3DCreate8
